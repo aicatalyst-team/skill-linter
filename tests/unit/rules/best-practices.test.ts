@@ -11,6 +11,9 @@ import { descriptionNoFirstPerson } from "../../../src/rules/best-practices/desc
 import { noTimeSensitiveContent } from "../../../src/rules/best-practices/no-time-sensitive-content.js";
 import { noExcessiveNegation } from "../../../src/rules/best-practices/no-excessive-negation.js";
 import { nonDescriptiveFilenames } from "../../../src/rules/best-practices/non-descriptive-filenames.js";
+import { progressiveDisclosure } from "../../../src/rules/best-practices/progressive-disclosure.js";
+import { scriptsAreReferenced } from "../../../src/rules/best-practices/scripts-are-referenced.js";
+import { scriptsHaveHelp } from "../../../src/rules/best-practices/scripts-have-help.js";
 
 describe("best-practices/description-has-trigger-words", () => {
   it("passes with trigger phrasing", async () => {
@@ -410,5 +413,96 @@ describe("best-practices/non-descriptive-filenames", () => {
     });
     expect(d).toHaveLength(1);
     expect(d[0].message).toContain("notes.md");
+  });
+});
+
+describe("best-practices/progressive-disclosure", () => {
+  it("passes for small body", async () => {
+    const d = await runRule(progressiveDisclosure, {
+      body: "# Small\nShort content.",
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("passes when large body has references", async () => {
+    const bigBody = "word ".repeat(4000);
+    const d = await runRule(progressiveDisclosure, {
+      body: bigBody,
+      files: [
+        { path: "/test/my-skill/references/guide.md", relativePath: "references/guide.md" },
+      ],
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("reports when large body has no references", async () => {
+    const bigBody = "word ".repeat(4000);
+    const d = await runRule(progressiveDisclosure, {
+      body: bigBody,
+      files: [],
+    });
+    expect(d).toHaveLength(1);
+    expect(d[0].message).toContain("references/");
+  });
+});
+
+describe("best-practices/scripts-are-referenced", () => {
+  it("passes when no scripts directory exists", async () => {
+    const d = await runRule(scriptsAreReferenced, {
+      body: "# Guide\nDo the thing.",
+      files: [],
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("passes when scripts are referenced in body", async () => {
+    const d = await runRule(scriptsAreReferenced, {
+      body: "# Guide\nRun `scripts/deploy.sh` to deploy.",
+      files: [
+        { path: "/test/my-skill/scripts/deploy.sh", relativePath: "scripts/deploy.sh" },
+      ],
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("reports scripts not referenced in body", async () => {
+    const d = await runRule(scriptsAreReferenced, {
+      body: "# Guide\nDo something manually.",
+      files: [
+        { path: "/test/my-skill/scripts/deploy.sh", relativePath: "scripts/deploy.sh" },
+      ],
+    });
+    expect(d).toHaveLength(1);
+    expect(d[0].message).toContain("deploy.sh");
+  });
+
+  it("skips data files in scripts/", async () => {
+    const d = await runRule(scriptsAreReferenced, {
+      body: "# Guide\nDo the thing.",
+      files: [
+        { path: "/test/my-skill/scripts/requirements.txt", relativePath: "scripts/requirements.txt" },
+        { path: "/test/my-skill/scripts/config.json", relativePath: "scripts/config.json" },
+      ],
+    });
+    expect(d).toHaveLength(0);
+  });
+});
+
+describe("best-practices/scripts-have-help", () => {
+  it("passes when no scripts directory exists", async () => {
+    const d = await runRule(scriptsHaveHelp, {
+      body: "# Guide",
+      files: [],
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("skips data files", async () => {
+    const d = await runRule(scriptsHaveHelp, {
+      files: [
+        { path: "/test/my-skill/scripts/requirements.txt", relativePath: "scripts/requirements.txt" },
+      ],
+    });
+    expect(d).toHaveLength(0);
   });
 });

@@ -1,4 +1,5 @@
 import type { Rule } from "../../engine/types.js";
+import { forEachNonCodeLine } from "../../utils/code-block-tracker.js";
 
 const PERSONA_PATTERNS = [
   /^you are (a |an |the )/i,
@@ -29,16 +30,9 @@ export const noPersonaInstructions: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0 || skill.body.trim() === "") return;
 
-    const lines = skill.bodyLines;
-    let inCodeBlock = false;
-    for (let i = 0; i < lines.length; i++) {
-      if (lines[i].trimStart().startsWith("```")) {
-        inCodeBlock = !inCodeBlock;
-        continue;
-      }
-      if (inCodeBlock) continue;
-      const trimmed = lines[i].trim();
-      if (trimmed === "") continue;
+    forEachNonCodeLine(skill.bodyLines, (line, i) => {
+      const trimmed = line.trim();
+      if (trimmed === "") return;
 
       const stripped = trimmed.replace(/^[-*>]\s+/, "");
 
@@ -55,6 +49,6 @@ export const noPersonaInstructions: Rule = {
           break;
         }
       }
-    }
+    });
   },
 };

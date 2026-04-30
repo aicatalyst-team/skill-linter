@@ -1,5 +1,10 @@
+import { unified } from "unified";
+import remarkParse from "remark-parse";
+import type { Root as MdastRoot } from "mdast";
 import type { ParsedSkill, FrontmatterData } from "../src/parser/types.js";
 import type { RuleContext, Rule, Diagnostic, ReportDescriptor } from "../src/engine/types.js";
+
+const markdownParser = unified().use(remarkParse);
 
 interface TestSkillOptions {
   dirPath?: string;
@@ -33,44 +38,10 @@ export function createTestSkill(options: TestSkillOptions = {}): ParsedSkill {
     body,
     bodyLines: body.split("\n"),
     bodyStartLine: options.bodyStartLine ?? 4,
-    mdast: { type: "root", children: [] },
+    mdast: markdownParser.parse(body) as MdastRoot,
     files: options.files ?? [],
     parseErrors: options.parseErrors ?? [],
   };
-}
-
-export interface TestContext {
-  diagnostics: Diagnostic[];
-  context: RuleContext;
-}
-
-export function createTestContext(
-  skillOptions: TestSkillOptions = {},
-): TestContext {
-  const skill = createTestSkill(skillOptions);
-  const diagnostics: Diagnostic[] = [];
-
-  const context: RuleContext = {
-    skill,
-    severity: "error",
-    options: [],
-    report(descriptor: ReportDescriptor) {
-      diagnostics.push({
-        ruleId: "test-rule",
-        severity: context.severity,
-        message: descriptor.messageId,
-        location: {
-          file: descriptor.location?.file ?? skill.skillMdPath,
-          startLine: descriptor.location?.startLine,
-          startColumn: descriptor.location?.startColumn,
-        },
-        fix: descriptor.fix,
-        category: "frontmatter",
-      });
-    },
-  };
-
-  return { diagnostics, context };
 }
 
 function interpolateMessage(

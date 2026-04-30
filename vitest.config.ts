@@ -4,5 +4,14 @@ export default defineConfig({
   test: {
     globals: true,
     include: ["tests/**/*.test.ts"],
+    coverage: {
+      provider: "v8",
+      include: ["src/**/*.ts"],
+      exclude: [
+        "src/cli/**",
+        "src/deep/providers/**",
+      ],
+      reporter: ["text", "text-summary"],
+    },
   },
 });

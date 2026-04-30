@@ -1,4 +1,5 @@
 import type { Rule } from "../../engine/types.js";
+import { forEachNonCodeLine } from "../../utils/code-block-tracker.js";
 
 const BULLET_LINE = /^[-*+]\s+/;
 const NEGATIVE_BULLET = /^[-*+]\s+(don't|do not|never|avoid|must not|should not|shouldn't|cannot|can't|won't|will not)\b/i;
@@ -24,25 +25,17 @@ export const noExcessiveNegation: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0 || skill.body.trim() === "") return;
 
-    const lines = skill.bodyLines;
     let totalBullets = 0;
     let negativeBullets = 0;
-    let inCodeBlock = false;
 
-    for (const line of lines) {
-      if (/^```/.test(line.trim())) {
-        inCodeBlock = !inCodeBlock;
-        continue;
-      }
-      if (inCodeBlock) continue;
-
+    forEachNonCodeLine(skill.bodyLines, (line) => {
       if (BULLET_LINE.test(line.trim())) {
         totalBullets++;
         if (NEGATIVE_BULLET.test(line.trim())) {
           negativeBullets++;
         }
       }
-    }
+    });
 
     if (
       negativeBullets >= MIN_NEGATIVE_COUNT &&

@@ -1,4 +1,5 @@
 import type { Rule } from "../../engine/types.js";
+import { forEachNonCodeLine } from "../../utils/code-block-tracker.js";
 
 const VAGUE_PATTERNS = [
   /\bfollow best practices\b/i,
@@ -39,16 +40,8 @@ export const noVagueInstructions: Rule = {
     if (skill.parseErrors.length > 0 || skill.body.trim() === "") return;
 
     const matches: string[] = [];
-    const lines = skill.bodyLines;
-    let inCodeBlock = false;
 
-    for (const line of lines) {
-      if (/^```/.test(line.trim())) {
-        inCodeBlock = !inCodeBlock;
-        continue;
-      }
-      if (inCodeBlock) continue;
-
+    forEachNonCodeLine(skill.bodyLines, (line) => {
       for (const pattern of VAGUE_PATTERNS) {
         const m = line.match(pattern);
         if (m) {
@@ -56,7 +49,7 @@ export const noVagueInstructions: Rule = {
           break;
         }
       }
-    }
+    });
 
     if (matches.length > THRESHOLD) {
       context.report({

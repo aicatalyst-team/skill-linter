@@ -1,5 +1,14 @@
 import type { Rule } from "../../engine/types.js";
 
+function hasHtmlNode(node: unknown): boolean {
+  const n = node as { type: string; children?: unknown[] };
+  if (n.type === "html") return true;
+  if (Array.isArray(n.children)) {
+    return n.children.some(hasHtmlNode);
+  }
+  return false;
+}
+
 export const noHtmlInBody: Rule = {
   meta: {
     id: "content/no-html-in-body",
@@ -16,9 +25,7 @@ export const noHtmlInBody: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0 || skill.body.trim() === "") return;
 
-    const hasHtml = skill.mdast.children.some((node) => node.type === "html");
-
-    if (hasHtml) {
+    if (hasHtmlNode(skill.mdast)) {
       context.report({
         messageId: "htmlFound",
         location: { startLine: skill.bodyStartLine },

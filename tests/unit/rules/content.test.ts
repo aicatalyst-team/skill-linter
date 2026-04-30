@@ -6,6 +6,8 @@ import { bodyLineLimit } from "../../../src/rules/content/body-line-limit.js";
 import { hasHeadings } from "../../../src/rules/content/has-headings.js";
 import { noBackslashPaths } from "../../../src/rules/content/no-backslash-paths.js";
 import { noAsciiArt } from "../../../src/rules/content/no-ascii-art.js";
+import { noHtmlInBody } from "../../../src/rules/content/no-html-in-body.js";
+import { referencesDepth } from "../../../src/rules/content/references-depth.js";
 
 describe("content/body-not-empty", () => {
   it("passes for non-empty body", async () => {
@@ -60,9 +62,16 @@ describe("content/has-headings", () => {
       body: "# Title\nContent here.",
       rawContent: "---\nname: test\n---\n# Title\nContent here.",
     });
-    // mdast in test helper is empty, so this will report
-    // We test the real parser integration via CLI tests
+    expect(d).toHaveLength(0);
+  });
+
+  it("reports when body has no headings", async () => {
+    const d = await runRule(hasHeadings, {
+      body: "Just plain text without any headings.",
+      rawContent: "---\nname: test\n---\nJust plain text without any headings.",
+    });
     expect(d).toHaveLength(1);
+    expect(d[0].ruleId).toBe("content/has-headings");
   });
 });
 
@@ -134,5 +143,57 @@ describe("content/no-ascii-art", () => {
       body: "~~~~~~~~~~~~~~~~~~~~",
     });
     expect(d).toHaveLength(1);
+  });
+});
+
+describe("content/no-html-in-body", () => {
+  it("passes for clean markdown", async () => {
+    const d = await runRule(noHtmlInBody, {
+      body: "# Title\n\nSome **bold** content.",
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("reports raw HTML in body", async () => {
+    const d = await runRule(noHtmlInBody, {
+      body: "# Title\n\n<div>Custom HTML block</div>\n\nMore content.",
+    });
+    expect(d).toHaveLength(1);
+    expect(d[0].message).toContain("HTML");
+  });
+
+  it("passes for empty body", async () => {
+    const d = await runRule(noHtmlInBody, {
+      body: "  \n",
+    });
+    expect(d).toHaveLength(0);
+  });
+});
+
+describe("content/references-depth", () => {
+  it("passes for shallow files", async () => {
+    const d = await runRule(referencesDepth, {
+      files: [
+        { path: "/test/my-skill/SKILL.md", relativePath: "SKILL.md" },
+        { path: "/test/my-skill/scripts/run.sh", relativePath: "scripts/run.sh" },
+        { path: "/test/my-skill/references/a/guide.md", relativePath: "references/a/guide.md" },
+      ],
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("reports deeply nested files", async () => {
+    const d = await runRule(referencesDepth, {
+      files: [
+        { path: "/test/my-skill/references/a/b/c/deep.md", relativePath: "references/a/b/c/deep.md" },
+      ],
+    });
+    expect(d).toHaveLength(1);
+    expect(d[0].message).toContain("references/a/b/c/deep.md");
+  });
+
+  it("passes when no files exist", async () => {
+    const d = await runRule(referencesDepth, { files: [] });
+    expect(d).toHaveLength(0);
   });
 });

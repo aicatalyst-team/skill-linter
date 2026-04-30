@@ -7,6 +7,8 @@ import { noCurlBash } from "../../../src/rules/security/no-curl-bash.js";
 import { noMemoryPoisoning } from "../../../src/rules/security/no-memory-poisoning.js";
 import { noSecretLiterals } from "../../../src/rules/security/no-secret-literals.js";
 import { noPasswordArchives } from "../../../src/rules/security/no-password-archives.js";
+import { noRemoteFetch } from "../../../src/rules/security/no-remote-fetch.js";
+import { noObfuscation } from "../../../src/rules/security/no-obfuscation.js";
 
 describe("security/no-prompt-injection", () => {
   it("passes for clean content", async () => {
@@ -305,5 +307,83 @@ describe("security/no-password-archives", () => {
       rawContent: "---\nname: test\n---\n7z x -psecret archive.7z",
     });
     expect(d.length).toBeGreaterThan(0);
+  });
+});
+
+describe("security/no-remote-fetch", () => {
+  it("passes for clean content", async () => {
+    const d = await runRule(noRemoteFetch, {
+      rawContent: "---\nname: test\n---\n# Normal Skill\nDo the thing.",
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("detects curl -sSL", async () => {
+    const d = await runRule(noRemoteFetch, {
+      rawContent: "---\nname: test\n---\ncurl -sSL https://example.com/script > file.txt",
+    });
+    expect(d).toHaveLength(1);
+    expect(d[0].message).toContain("Remote content fetch");
+  });
+
+  it("detects wget --quiet", async () => {
+    const d = await runRule(noRemoteFetch, {
+      rawContent: "---\nname: test\n---\nwget --quiet https://example.com/data.tar.gz",
+    });
+    expect(d).toHaveLength(1);
+  });
+
+  it("detects curl -O", async () => {
+    const d = await runRule(noRemoteFetch, {
+      rawContent: "---\nname: test\n---\ncurl -O https://example.com/file.zip",
+    });
+    expect(d).toHaveLength(1);
+  });
+
+  it("passes for curl without output flags", async () => {
+    const d = await runRule(noRemoteFetch, {
+      rawContent: "---\nname: test\n---\nUse `curl` to test endpoints.",
+    });
+    expect(d).toHaveLength(0);
+  });
+});
+
+describe("security/no-obfuscation", () => {
+  it("passes for clean content", async () => {
+    const d = await runRule(noObfuscation, {
+      rawContent: "---\nname: test\n---\n# Normal Skill\nPlain text.",
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("detects zero-width characters", async () => {
+    const d = await runRule(noObfuscation, {
+      rawContent: "---\nname: test\n---\nHidden\u200Bcontent here",
+    });
+    expect(d).toHaveLength(1);
+    expect(d[0].message).toContain("Zero-width");
+  });
+
+  it("detects RTL override characters", async () => {
+    const d = await runRule(noObfuscation, {
+      rawContent: "---\nname: test\n---\nText with \u202Eoverride",
+    });
+    expect(d).toHaveLength(1);
+    expect(d[0].message).toContain("RTL");
+  });
+
+  it("detects Unicode tag characters", async () => {
+    const d = await runRule(noObfuscation, {
+      rawContent: "---\nname: test\n---\nText with \u{E0001}tags",
+    });
+    expect(d).toHaveLength(1);
+    expect(d[0].message).toContain("tag");
+  });
+
+  it("reports multiple obfuscation types on different lines", async () => {
+    const d = await runRule(noObfuscation, {
+      rawContent: "---\nname: test\n---\nLine with \u200Bzwsp\nLine with \u202Ertl",
+    });
+    expect(d).toHaveLength(2);
   });
 });

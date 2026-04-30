@@ -1,4 +1,5 @@
 import type { Rule } from "../../engine/types.js";
+import { forEachNonCodeLine } from "../../utils/code-block-tracker.js";
 
 const BOX_DRAWING = /[─-╿▀-▟]/;
 const REPEATED_DECORATIVE = /^[=*~#_^]{4,}$/;
@@ -29,23 +30,13 @@ export const noAsciiArt: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0 || skill.body.trim() === "") return;
 
-    const lines = skill.bodyLines;
-    let inCodeBlock = false;
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      if (/^```/.test(line.trim())) {
-        inCodeBlock = !inCodeBlock;
-        continue;
-      }
-      if (inCodeBlock) continue;
-
+    forEachNonCodeLine(skill.bodyLines, (line, i) => {
       if (isDecorative(line)) {
         context.report({
           messageId: "asciiArt",
           location: { startLine: skill.bodyStartLine + i },
         });
       }
-    }
+    });
   },
 };

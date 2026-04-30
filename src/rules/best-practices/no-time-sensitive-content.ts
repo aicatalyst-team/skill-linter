@@ -1,4 +1,5 @@
 import type { Rule } from "../../engine/types.js";
+import { forEachNonCodeLine } from "../../utils/code-block-tracker.js";
 
 const MONTHS = "(?:January|February|March|April|May|June|July|August|September|October|November|December)";
 
@@ -33,17 +34,7 @@ export const noTimeSensitiveContent: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0 || skill.body.trim() === "") return;
 
-    const lines = skill.bodyLines;
-    let inCodeBlock = false;
-
-    for (let i = 0; i < lines.length; i++) {
-      const line = lines[i];
-      if (/^```/.test(line.trim())) {
-        inCodeBlock = !inCodeBlock;
-        continue;
-      }
-      if (inCodeBlock) continue;
-
+    forEachNonCodeLine(skill.bodyLines, (line, i) => {
       for (const pattern of TIME_SENSITIVE_PATTERNS) {
         const m = line.match(pattern);
         if (m) {
@@ -55,6 +46,6 @@ export const noTimeSensitiveContent: Rule = {
           break;
         }
       }
-    }
+    });
   },
 };
