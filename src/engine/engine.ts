@@ -12,6 +12,7 @@ import type { ParsedSkill } from "../parser/types.js";
 
 export interface EngineOptions {
   rules?: Record<string, Severity | "off" | [Severity | "off", ...unknown[]]>;
+  parseOptions?: import("../parser/parse-skill.js").ParseOptions;
 }
 
 function interpolateMessage(
@@ -140,7 +141,7 @@ export async function lint(
   skillPath: string,
   options: EngineOptions = {},
 ): Promise<LintResult> {
-  const skill = await parseSkill(skillPath);
+  const skill = await parseSkill(skillPath, options.parseOptions);
   const diagnostics: Diagnostic[] = [];
   const rules = getAllRules();
   const suppressedLines = parseSuppressedLines(skill.rawContentLines);

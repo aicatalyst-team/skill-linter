@@ -40,4 +40,19 @@ describe("parseSkill", () => {
     expect(skill.frontmatterEndLine).toBeGreaterThan(1);
     expect(skill.bodyStartLine).toBe(skill.frontmatterEndLine + 1);
   });
+
+  it("uses dirNameOverride when provided", async () => {
+    const skill = await parseSkill(join(FIXTURES, "valid/minimal-skill"), {
+      dirNameOverride: "custom-name",
+    });
+    expect(skill.parseErrors).toHaveLength(0);
+    expect(skill.dirName).toBe("custom-name");
+    // dirPath should still be the actual path
+    expect(skill.dirPath).toContain("minimal-skill");
+  });
+
+  it("uses basename when no dirNameOverride is provided", async () => {
+    const skill = await parseSkill(join(FIXTURES, "valid/minimal-skill"));
+    expect(skill.dirName).toBe("minimal-skill");
+  });
 });

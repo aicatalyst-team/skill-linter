@@ -50,9 +50,13 @@ async function walkDirectory(dirPath: string, rootPath?: string): Promise<SkillF
   return files;
 }
 
-export async function parseSkill(skillDirPath: string): Promise<ParsedSkill> {
+export interface ParseOptions {
+  dirNameOverride?: string;
+}
+
+export async function parseSkill(skillDirPath: string, options?: ParseOptions): Promise<ParsedSkill> {
   const dirPath = resolve(skillDirPath);
-  const dirName = basename(dirPath);
+  const dirName = options?.dirNameOverride ?? basename(dirPath);
 
   let dirStat;
   try {

@@ -39,6 +39,7 @@ export const checkCommand = new Command("check")
     const resolvedPaths: string[] = [];
     const tempDirs: string[] = [];
     const displayPathMap = new Map<string, string>();
+    const dirNameOverrideMap = new Map<string, string>();
 
     // Separate local paths from GitHub URLs
     const localPaths: string[] = [];
@@ -72,6 +73,11 @@ export const checkCommand = new Command("check")
             skill.localPath,
             `${ref.owner}/${ref.repo}:${skill.remotePath}`,
           );
+          // Root-level skills have an empty remotePath, so dirName would be
+          // the random temp-dir name. Use the repo name instead.
+          if (!skill.remotePath) {
+            dirNameOverrideMap.set(skill.localPath, ref.repo);
+          }
         }
       }
     }
@@ -80,7 +86,11 @@ export const checkCommand = new Command("check")
 
     const lintResults = await Promise.all(
       resolvedPaths.map(async (path) => {
-        const result = await lint(path, { rules: config.rules });
+        const dirNameOverride = dirNameOverrideMap.get(path);
+        const result = await lint(path, {
+          rules: config.rules,
+          parseOptions: dirNameOverride ? { dirNameOverride } : undefined,
+        });
         const ghDisplayPath = displayPathMap.get(path);
         if (ghDisplayPath) {
           result.displayPath = ghDisplayPath;
