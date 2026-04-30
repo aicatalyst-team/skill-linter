@@ -23,7 +23,7 @@ export const pinnedVersions: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0) return;
 
-    const lines = skill.rawContent.split("\n");
+    const lines = skill.rawContentLines;
     for (let i = 0; i < lines.length; i++) {
       for (const { pattern, label } of UNPINNED_PATTERNS) {
         if (pattern.test(lines[i])) {

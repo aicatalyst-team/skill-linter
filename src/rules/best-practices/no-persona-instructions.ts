@@ -11,14 +11,6 @@ const PERSONA_PATTERNS = [
   /^assume the role of /i,
 ];
 
-function isInsideCodeBlock(lines: string[], lineIndex: number): boolean {
-  let fenceCount = 0;
-  for (let i = 0; i < lineIndex; i++) {
-    if (/^```/.test(lines[i].trim())) fenceCount++;
-  }
-  return fenceCount % 2 === 1;
-}
-
 export const noPersonaInstructions: Rule = {
   meta: {
     id: "best-practices/no-persona-instructions",
@@ -37,11 +29,16 @@ export const noPersonaInstructions: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0 || skill.body.trim() === "") return;
 
-    const lines = skill.body.split("\n");
+    const lines = skill.bodyLines;
+    let inCodeBlock = false;
     for (let i = 0; i < lines.length; i++) {
+      if (lines[i].trimStart().startsWith("```")) {
+        inCodeBlock = !inCodeBlock;
+        continue;
+      }
+      if (inCodeBlock) continue;
       const trimmed = lines[i].trim();
       if (trimmed === "") continue;
-      if (isInsideCodeBlock(lines, i)) continue;
 
       const stripped = trimmed.replace(/^[-*>]\s+/, "");
 

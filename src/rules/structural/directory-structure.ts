@@ -1,5 +1,3 @@
-import { readdirSync, statSync } from "node:fs";
-import { join, basename } from "node:path";
 import type { Rule } from "../../engine/types.js";
 
 const KNOWN_DIRS = new Set(["scripts", "references", "assets", "evals", "prompts"]);
@@ -21,18 +19,19 @@ export const directoryStructure: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0) return;
 
-    let entries;
-    try {
-      entries = readdirSync(skill.dirPath, { withFileTypes: true });
-    } catch {
-      return;
+    const topLevelDirs = new Set<string>();
+    for (const file of skill.files) {
+      const sep = file.relativePath.indexOf("/");
+      if (sep !== -1) {
+        topLevelDirs.add(file.relativePath.slice(0, sep));
+      }
     }
 
-    for (const entry of entries) {
-      if (entry.isDirectory() && !entry.name.startsWith(".") && !KNOWN_DIRS.has(entry.name)) {
+    for (const dir of topLevelDirs) {
+      if (!dir.startsWith(".") && !KNOWN_DIRS.has(dir)) {
         context.report({
           messageId: "unknownDir",
-          data: { dir: entry.name },
+          data: { dir },
         });
       }
     }

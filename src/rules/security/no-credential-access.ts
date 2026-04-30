@@ -43,7 +43,7 @@ export const noCredentialAccess: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0) return;
 
-    const lines = skill.rawContent.split("\n");
+    const lines = skill.rawContentLines;
     for (let i = 0; i < lines.length; i++) {
       for (const pattern of SENSITIVE_PATHS) {
         const match = lines[i].match(pattern);

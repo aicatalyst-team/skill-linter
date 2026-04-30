@@ -22,7 +22,7 @@ export const compatibilityLength: Rule = {
     if (typeof compat !== "string") return;
 
     if (compat.length > MAX_COMPATIBILITY_LENGTH) {
-      const line = findFieldLine(skill.rawFrontmatter, "compatibility", skill.frontmatterStartLine);
+      const line = findFieldLine(skill.rawFrontmatter, "compatibility", skill.frontmatterStartLine, skill.frontmatterFieldLines);
       context.report({
         messageId: "tooLong",
         data: { length: String(compat.length) },

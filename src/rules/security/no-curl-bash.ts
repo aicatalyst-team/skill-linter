@@ -26,7 +26,7 @@ export const noCurlBash: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0) return;
 
-    const lines = skill.rawContent.split("\n");
+    const lines = skill.rawContentLines;
     for (let i = 0; i < lines.length; i++) {
       for (const pattern of PIPE_TO_SHELL) {
         if (pattern.test(lines[i])) {

@@ -1,4 +1,4 @@
-import { readdirSync } from "node:fs";
+import { basename } from "node:path";
 import type { Rule } from "../../engine/types.js";
 
 const EXPECTED_FILES = new Set([
@@ -28,22 +28,14 @@ export const noExtraTopLevelFiles: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0) return;
 
-    let entries;
-    try {
-      entries = readdirSync(skill.dirPath, { withFileTypes: true });
-    } catch {
-      return;
-    }
-
-    for (const entry of entries) {
-      if (
-        entry.isFile() &&
-        !entry.name.startsWith(".") &&
-        !EXPECTED_FILES.has(entry.name.toLowerCase())
-      ) {
+    for (const file of skill.files) {
+      // Only top-level files (no directory separator in relative path)
+      if (file.relativePath.includes("/")) continue;
+      const name = basename(file.relativePath);
+      if (!name.startsWith(".") && !EXPECTED_FILES.has(name.toLowerCase())) {
         context.report({
           messageId: "unexpected",
-          data: { file: entry.name },
+          data: { file: name },
         });
       }
     }

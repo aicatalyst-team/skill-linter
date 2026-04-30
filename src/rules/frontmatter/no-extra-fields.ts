@@ -43,6 +43,7 @@ export const noExtraFields: Rule = {
         skill.rawFrontmatter,
         key,
         skill.frontmatterStartLine,
+        skill.frontmatterFieldLines,
       );
 
       if (EXTENSION_FIELDS.has(key)) {

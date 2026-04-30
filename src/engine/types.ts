@@ -67,4 +67,5 @@ export interface LintResult {
   warningCount: number;
   infoCount: number;
   fixableCount: number;
+  parsedSkill?: import("../parser/types.js").ParsedSkill;
 }

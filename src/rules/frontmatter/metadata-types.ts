@@ -20,7 +20,7 @@ export const metadataTypes: Rule = {
     const metadata = skill.frontmatter.metadata;
     if (metadata === undefined) return;
 
-    const line = findFieldLine(skill.rawFrontmatter, "metadata", skill.frontmatterStartLine);
+    const line = findFieldLine(skill.rawFrontmatter, "metadata", skill.frontmatterStartLine, skill.frontmatterFieldLines);
 
     if (typeof metadata !== "object" || metadata === null || Array.isArray(metadata)) {
       context.report({

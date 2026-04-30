@@ -1,36 +1,7 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
-import { join } from "node:path";
+import { readFileSync } from "node:fs";
+import { basename } from "node:path";
 import type { Rule } from "../../engine/types.js";
-
-const NON_SCRIPT_FILES = new Set([
-  "requirements.txt",
-  "package.json",
-  "package-lock.json",
-  "tsconfig.json",
-  "pyproject.toml",
-  "setup.cfg",
-  "Makefile",
-  "Dockerfile",
-  ".gitignore",
-]);
-
-const NON_SCRIPT_EXTENSIONS = new Set([
-  ".txt",
-  ".json",
-  ".yaml",
-  ".yml",
-  ".toml",
-  ".cfg",
-  ".ini",
-  ".csv",
-  ".md",
-]);
-
-function isDataFile(filename: string): boolean {
-  if (NON_SCRIPT_FILES.has(filename)) return true;
-  const ext = filename.slice(filename.lastIndexOf("."));
-  return NON_SCRIPT_EXTENSIONS.has(ext);
-}
+import { isDataFile } from "../../utils/script-files.js";
 
 const HELP_INDICATORS = [
   /--help/,
@@ -60,23 +31,22 @@ export const scriptsHaveHelp: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0) return;
 
-    const scriptsDir = join(skill.dirPath, "scripts");
-    if (!existsSync(scriptsDir)) return;
+    const scriptFiles = skill.files.filter((f) => {
+      if (!f.relativePath.startsWith("scripts/")) return false;
+      const rest = f.relativePath.slice("scripts/".length);
+      if (rest.includes("/")) return false;
+      return !rest.startsWith(".");
+    });
 
-    let scripts: string[];
-    try {
-      scripts = readdirSync(scriptsDir).filter((f) => !f.startsWith("."));
-    } catch {
-      return;
-    }
+    if (scriptFiles.length === 0) return;
 
-    for (const script of scripts) {
+    for (const file of scriptFiles) {
+      const script = basename(file.relativePath);
       if (isDataFile(script)) continue;
 
-      const filePath = join(scriptsDir, script);
       let content: string;
       try {
-        content = readFileSync(filePath, "utf-8");
+        content = readFileSync(file.path, "utf-8");
       } catch {
         continue;
       }

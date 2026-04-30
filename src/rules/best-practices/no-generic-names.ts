@@ -48,7 +48,7 @@ export const noGenericNames: Rule = {
     if (typeof name !== "string" || name.trim() === "") return;
 
     if (GENERIC_NAMES.has(name.trim().toLowerCase())) {
-      const line = findFieldLine(skill.rawFrontmatter, "name", skill.frontmatterStartLine);
+      const line = findFieldLine(skill.rawFrontmatter, "name", skill.frontmatterStartLine, skill.frontmatterFieldLines);
       context.report({
         messageId: "generic",
         data: { name: name.trim() },

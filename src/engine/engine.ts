@@ -50,10 +50,9 @@ const SUPPRESS_RE =
   /<!--\s*skilleval-disable-next-line(?:\s+([\w/,-]+))?\s*-->/;
 
 function parseSuppressedLines(
-  rawContent: string,
+  lines: string[],
 ): Map<number, Set<string> | null> {
   const suppressed = new Map<number, Set<string> | null>();
-  const lines = rawContent.split("\n");
   for (let i = 0; i < lines.length; i++) {
     const match = lines[i].match(SUPPRESS_RE);
     if (match) {
@@ -88,7 +87,7 @@ export async function lint(
   const skill = await parseSkill(skillPath);
   const diagnostics: Diagnostic[] = [];
   const rules = getAllRules();
-  const suppressedLines = parseSuppressedLines(skill.rawContent);
+  const suppressedLines = parseSuppressedLines(skill.rawContentLines);
 
   for (const parseError of skill.parseErrors) {
     diagnostics.push({
@@ -140,12 +139,24 @@ export async function lint(
     await rule.create(context);
   }
 
+  let errorCount = 0;
+  let warningCount = 0;
+  let infoCount = 0;
+  let fixableCount = 0;
+  for (const d of diagnostics) {
+    if (d.severity === "error") errorCount++;
+    else if (d.severity === "warning") warningCount++;
+    else infoCount++;
+    if (d.fix !== undefined) fixableCount++;
+  }
+
   return {
     skillPath,
     diagnostics,
-    errorCount: diagnostics.filter((d) => d.severity === "error").length,
-    warningCount: diagnostics.filter((d) => d.severity === "warning").length,
-    infoCount: diagnostics.filter((d) => d.severity === "info").length,
-    fixableCount: diagnostics.filter((d) => d.fix !== undefined).length,
+    errorCount,
+    warningCount,
+    infoCount,
+    fixableCount,
+    parsedSkill: skill,
   };
 }

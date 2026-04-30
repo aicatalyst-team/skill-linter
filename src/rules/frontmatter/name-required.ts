@@ -29,6 +29,7 @@ export const nameRequired: Rule = {
         skill.rawFrontmatter,
         "name",
         skill.frontmatterStartLine,
+        skill.frontmatterFieldLines,
       );
       context.report({
         messageId: "empty",

@@ -39,7 +39,7 @@ export const noVagueInstructions: Rule = {
     if (skill.parseErrors.length > 0 || skill.body.trim() === "") return;
 
     const matches: string[] = [];
-    const lines = skill.body.split("\n");
+    const lines = skill.bodyLines;
     let inCodeBlock = false;
 
     for (const line of lines) {

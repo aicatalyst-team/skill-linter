@@ -25,7 +25,7 @@ export const nameNoReservedWords: Rule = {
     const lower = name.toLowerCase();
     for (const word of RESERVED_WORDS) {
       if (lower.includes(word)) {
-        const line = findFieldLine(skill.rawFrontmatter, "name", skill.frontmatterStartLine);
+        const line = findFieldLine(skill.rawFrontmatter, "name", skill.frontmatterStartLine, skill.frontmatterFieldLines);
         context.report({
           messageId: "reserved",
           data: { name, word },

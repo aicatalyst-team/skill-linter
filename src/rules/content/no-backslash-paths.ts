@@ -20,7 +20,7 @@ export const noBackslashPaths: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0 || skill.body.trim() === "") return;
 
-    const lines = skill.body.split("\n");
+    const lines = skill.bodyLines;
     for (let i = 0; i < lines.length; i++) {
       const match = BACKSLASH_PATH.exec(lines[i]);
       if (match) {

@@ -19,7 +19,7 @@ export const bodyLineLimit: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0 || skill.body.trim() === "") return;
 
-    const lines = skill.body.split("\n").length;
+    const lines = skill.bodyLines.length;
     if (lines > MAX_LINES) {
       context.report({
         messageId: "tooLong",

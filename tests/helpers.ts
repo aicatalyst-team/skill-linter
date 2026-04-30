@@ -17,16 +17,21 @@ interface TestSkillOptions {
 }
 
 export function createTestSkill(options: TestSkillOptions = {}): ParsedSkill {
+  const rawContent = options.rawContent ?? "---\nname: my-skill\n---\n# Test";
+  const body = options.body ?? "# Test\n";
   return {
     dirPath: options.dirPath ?? "/test/my-skill",
     dirName: options.dirName ?? "my-skill",
     skillMdPath: options.skillMdPath ?? "/test/my-skill/SKILL.md",
-    rawContent: options.rawContent ?? "---\nname: my-skill\n---\n# Test",
+    rawContent,
+    rawContentLines: rawContent.split("\n"),
     frontmatter: options.frontmatter ?? { name: "my-skill", description: "A test skill" },
     rawFrontmatter: options.rawFrontmatter ?? "name: my-skill\ndescription: A test skill",
+    frontmatterFieldLines: new Map(),
     frontmatterStartLine: options.frontmatterStartLine ?? 1,
     frontmatterEndLine: options.frontmatterEndLine ?? 3,
-    body: options.body ?? "# Test\n",
+    body,
+    bodyLines: body.split("\n"),
     bodyStartLine: options.bodyStartLine ?? 4,
     mdast: { type: "root", children: [] },
     files: options.files ?? [],

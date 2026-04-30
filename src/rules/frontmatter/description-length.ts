@@ -22,7 +22,7 @@ export const descriptionLength: Rule = {
     if (typeof desc !== "string") return;
 
     if (desc.length > MAX_DESCRIPTION_LENGTH) {
-      const line = findFieldLine(skill.rawFrontmatter, "description", skill.frontmatterStartLine);
+      const line = findFieldLine(skill.rawFrontmatter, "description", skill.frontmatterStartLine, skill.frontmatterFieldLines);
       context.report({
         messageId: "tooLong",
         data: { length: String(desc.length) },

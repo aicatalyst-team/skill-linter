@@ -20,15 +20,21 @@ export interface GitHubClient {
   ): Promise<void>;
 }
 
+let cachedToken: string | undefined;
+let tokenResolved = false;
+
 function resolveToken(): string | undefined {
+  if (tokenResolved) return cachedToken;
+  tokenResolved = true;
   try {
-    return execFileSync("gh", ["auth", "token"], {
+    cachedToken = execFileSync("gh", ["auth", "token"], {
       encoding: "utf-8",
       stdio: ["ignore", "pipe", "ignore"],
     }).trim();
   } catch {
-    return process.env.GITHUB_TOKEN;
+    cachedToken = process.env.GITHUB_TOKEN;
   }
+  return cachedToken;
 }
 
 function authHeaders(token?: string): Record<string, string> {

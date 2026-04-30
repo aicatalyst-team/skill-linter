@@ -24,7 +24,7 @@ export const descriptionNoFirstPerson: Rule = {
 
     const match = desc.trim().match(FIRST_PERSON_START);
     if (match) {
-      const line = findFieldLine(skill.rawFrontmatter, "description", skill.frontmatterStartLine);
+      const line = findFieldLine(skill.rawFrontmatter, "description", skill.frontmatterStartLine, skill.frontmatterFieldLines);
       context.report({
         messageId: "firstPerson",
         data: { match: match[1].trim() },

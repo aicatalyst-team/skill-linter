@@ -68,7 +68,7 @@ export const noPromptInjection: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0) return;
 
-    const lines = skill.rawContent.split("\n");
+    const lines = skill.rawContentLines;
     let inCodeFence = false;
 
     for (let i = 0; i < lines.length; i++) {

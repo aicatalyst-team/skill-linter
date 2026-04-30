@@ -24,7 +24,7 @@ export const noExcessiveNegation: Rule = {
     const { skill } = context;
     if (skill.parseErrors.length > 0 || skill.body.trim() === "") return;
 
-    const lines = skill.body.split("\n");
+    const lines = skill.bodyLines;
     let totalBullets = 0;
     let negativeBullets = 0;
     let inCodeBlock = false;

@@ -33,7 +33,7 @@ export const descriptionHasTriggerWords: Rule = {
 
     const hasTrigger = TRIGGER_PATTERNS.some((p) => p.test(desc));
     if (!hasTrigger) {
-      const line = findFieldLine(skill.rawFrontmatter, "description", skill.frontmatterStartLine);
+      const line = findFieldLine(skill.rawFrontmatter, "description", skill.frontmatterStartLine, skill.frontmatterFieldLines);
       context.report({
         messageId: "noTrigger",
         location: { startLine: line },

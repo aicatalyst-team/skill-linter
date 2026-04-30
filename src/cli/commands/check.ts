@@ -4,7 +4,6 @@ import { lint } from "../../engine/engine.js";
 import { registerAllRules } from "../../rules/index.js";
 import { loadConfig } from "../../config/index.js";
 import { format, type FormatType } from "../../formatters/index.js";
-import { parseSkill } from "../../parser/index.js";
 import {
   resolveProvider,
   runDeepAnalysis,
@@ -40,25 +39,44 @@ export const checkCommand = new Command("check")
     const resolvedPaths: string[] = [];
     const tempDirs: string[] = [];
     const displayPathMap = new Map<string, string>();
+
+    // Separate local paths from GitHub URLs
+    const localPaths: string[] = [];
+    const ghRefs: { ref: NonNullable<ReturnType<typeof parseGitHubUrl>>; raw: string }[] = [];
     for (const p of paths) {
       const ghRef = parseGitHubUrl(p);
       if (ghRef) {
-        if (!options.quiet) {
-          console.log(`  Fetching skills from ${ghRef.owner}/${ghRef.repo}...`);
+        ghRefs.push({ ref: ghRef, raw: p });
+      } else {
+        localPaths.push(p);
+      }
+    }
+
+    // Fetch all GitHub repos in parallel
+    if (ghRefs.length > 0) {
+      if (!options.quiet) {
+        for (const { ref } of ghRefs) {
+          console.log(`  Fetching skills from ${ref.owner}/${ref.repo}...`);
         }
-        const fetchResult = await fetchRemoteSkills(ghRef);
+      }
+      const fetchResults = await Promise.all(
+        ghRefs.map(({ ref }) => fetchRemoteSkills(ref)),
+      );
+      for (let i = 0; i < ghRefs.length; i++) {
+        const fetchResult = fetchResults[i];
+        const { ref } = ghRefs[i];
         tempDirs.push(fetchResult.tempDir);
         for (const skill of fetchResult.skills) {
           resolvedPaths.push(skill.localPath);
           displayPathMap.set(
             skill.localPath,
-            `${ghRef.owner}/${ghRef.repo}:${skill.remotePath}`,
+            `${ref.owner}/${ref.repo}:${skill.remotePath}`,
           );
         }
-      } else {
-        resolvedPaths.push(p);
       }
     }
+
+    resolvedPaths.push(...localPaths);
 
     const lintResults = await Promise.all(
       resolvedPaths.map(async (path) => {
@@ -128,7 +146,10 @@ async function runDeepForSkill(
   quiet?: boolean,
 ): Promise<void> {
   try {
-    const skill = await parseSkill(path);
+    const skill = result.parsedSkill;
+    if (!skill) {
+      throw new Error(`No parsed skill available for ${path}`);
+    }
     const deepResult = await runDeepAnalysis(skill, provider);
     const deepDiags = deepFindingsToDiagnostics(
       deepResult.findings,

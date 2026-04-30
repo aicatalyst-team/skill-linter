@@ -20,11 +20,14 @@ export interface ParsedSkill {
   dirName: string;
   skillMdPath: string;
   rawContent: string;
+  rawContentLines: string[];
   frontmatter: FrontmatterData;
   rawFrontmatter: string;
+  frontmatterFieldLines: Map<string, number>;
   frontmatterStartLine: number;
   frontmatterEndLine: number;
   body: string;
+  bodyLines: string[];
   bodyStartLine: number;
   mdast: MdastRoot;
   files: SkillFile[];

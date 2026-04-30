@@ -41,7 +41,7 @@ export const descriptionQuality: Rule = {
     const desc = skill.frontmatter.description;
     if (typeof desc !== "string" || desc.trim() === "") return;
 
-    const line = findFieldLine(skill.rawFrontmatter, "description", skill.frontmatterStartLine);
+    const line = findFieldLine(skill.rawFrontmatter, "description", skill.frontmatterStartLine, skill.frontmatterFieldLines);
 
     if (desc.trim().length < MIN_SUBSTANTIVE_LENGTH) {
       context.report({

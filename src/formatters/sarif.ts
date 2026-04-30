@@ -46,9 +46,6 @@ export function formatSarif(results: LintResult[]): string {
   }
 
   sarifBuilder.addRun(runBuilder);
-  const sarifOutput = sarifBuilder.buildSarifJsonString();
-  if (typeof sarifOutput === "string") {
-    return JSON.stringify(JSON.parse(sarifOutput), null, 2) + "\n";
-  }
+  const sarifOutput = sarifBuilder.buildSarifOutput();
   return JSON.stringify(sarifOutput, null, 2) + "\n";
 }

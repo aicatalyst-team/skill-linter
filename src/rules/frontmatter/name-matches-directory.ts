@@ -24,7 +24,7 @@ export const nameMatchesDirectory: Rule = {
     const normalizedDir = nfkcNormalize(skill.dirName);
 
     if (normalizedName !== normalizedDir) {
-      const line = findFieldLine(skill.rawFrontmatter, "name", skill.frontmatterStartLine);
+      const line = findFieldLine(skill.rawFrontmatter, "name", skill.frontmatterStartLine, skill.frontmatterFieldLines);
       context.report({
         messageId: "mismatch",
         data: { name: normalizedName, dirName: normalizedDir },

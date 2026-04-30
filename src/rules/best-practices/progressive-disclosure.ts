@@ -1,5 +1,3 @@
-import { existsSync, readdirSync } from "node:fs";
-import { join } from "node:path";
 import type { Rule } from "../../engine/types.js";
 import { estimateTokens } from "../../utils/token-counter.js";
 
@@ -25,14 +23,7 @@ export const progressiveDisclosure: Rule = {
     const tokens = estimateTokens(skill.body);
     if (tokens <= THRESHOLD_TOKENS) return;
 
-    const refsDir = join(skill.dirPath, "references");
-    let hasRefs = false;
-    if (existsSync(refsDir)) {
-      try {
-        const entries = readdirSync(refsDir);
-        hasRefs = entries.length > 0;
-      } catch { /* ignore */ }
-    }
+    const hasRefs = skill.files.some((f) => f.relativePath.startsWith("references/"));
 
     if (!hasRefs) {
       context.report({

@@ -20,7 +20,7 @@ export const allowedToolsFormat: Rule = {
     if (tools === undefined) return;
 
     if (typeof tools !== "string") {
-      const line = findFieldLine(skill.rawFrontmatter, "allowed-tools", skill.frontmatterStartLine);
+      const line = findFieldLine(skill.rawFrontmatter, "allowed-tools", skill.frontmatterStartLine, skill.frontmatterFieldLines);
       context.report({
         messageId: "notString",
         data: { type: Array.isArray(tools) ? "array" : typeof tools },

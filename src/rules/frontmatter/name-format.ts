@@ -28,7 +28,7 @@ export const nameFormat: Rule = {
     if (typeof name !== "string" || name.trim() === "") return;
 
     const normalized = nfkcNormalize(name);
-    const line = findFieldLine(skill.rawFrontmatter, "name", skill.frontmatterStartLine);
+    const line = findFieldLine(skill.rawFrontmatter, "name", skill.frontmatterStartLine, skill.frontmatterFieldLines);
     const loc = { startLine: line };
 
     if (normalized.length > MAX_NAME_LENGTH) {
