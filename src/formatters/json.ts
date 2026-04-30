@@ -1,7 +1,15 @@
 import type { LintResult } from "../engine/types.js";
+import { VERSION } from "../version.js";
 
 interface JsonOutput {
   version: string;
+  summary: {
+    skillCount: number;
+    errorCount: number;
+    warningCount: number;
+    infoCount: number;
+    fixableCount: number;
+  };
   skills: Array<{
     path: string;
     diagnostics: Array<{
@@ -25,7 +33,14 @@ interface JsonOutput {
 
 export function formatJson(results: LintResult[]): string {
   const output: JsonOutput = {
-    version: "0.1.0",
+    version: VERSION,
+    summary: {
+      skillCount: results.length,
+      errorCount: results.reduce((s, r) => s + r.errorCount, 0),
+      warningCount: results.reduce((s, r) => s + r.warningCount, 0),
+      infoCount: results.reduce((s, r) => s + r.infoCount, 0),
+      fixableCount: results.reduce((s, r) => s + r.fixableCount, 0),
+    },
     skills: results.map((r) => ({
       path: r.displayPath ?? r.skillPath,
       diagnostics: r.diagnostics.map((d) => ({

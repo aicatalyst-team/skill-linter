@@ -3,11 +3,12 @@ import { checkCommand } from "./commands/check.js";
 import { rulesCommand } from "./commands/rules.js";
 import { initCommand } from "./commands/init.js";
 import { newCommand } from "./commands/new.js";
+import { VERSION } from "../version.js";
 
 const program = new Command()
   .name("skilleval")
   .description("Linter, scorer, and evaluator for AI agent skill files")
-  .version("0.1.0");
+  .version(VERSION);
 
 program.addCommand(checkCommand, { isDefault: true });
 program.addCommand(rulesCommand);

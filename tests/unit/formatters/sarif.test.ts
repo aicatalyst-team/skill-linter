@@ -123,4 +123,59 @@ describe("SARIF formatter", () => {
     expect(parsed.runs).toHaveLength(1);
     expect(parsed.runs[0].results).toHaveLength(0);
   });
+
+  it("uses ruleDescription for SARIF rule shortDescription", () => {
+    const result: LintResult = {
+      skillPath: "/test/my-skill",
+      diagnostics: [
+        {
+          ruleId: "frontmatter/name-required",
+          severity: "error",
+          message: "missing name field",
+          location: { file: "SKILL.md", startLine: 1 },
+          category: "frontmatter",
+          ruleDescription: "Skill must have a name field in frontmatter",
+        },
+      ],
+      errorCount: 1,
+      warningCount: 0,
+      infoCount: 0,
+      fixableCount: 0,
+    };
+
+    const output = formatSarif([result]);
+    const parsed = JSON.parse(output);
+    const rule = parsed.runs[0].tool.driver.rules[0];
+    expect(rule.shortDescription.text).toBe("Skill must have a name field in frontmatter");
+  });
+
+  it("falls back to ruleId when ruleDescription is absent", () => {
+    const result: LintResult = {
+      skillPath: "/test/my-skill",
+      diagnostics: [
+        {
+          ruleId: "frontmatter/name-required",
+          severity: "error",
+          message: "missing name",
+          location: { file: "SKILL.md", startLine: 1 },
+          category: "frontmatter",
+        },
+      ],
+      errorCount: 1,
+      warningCount: 0,
+      infoCount: 0,
+      fixableCount: 0,
+    };
+
+    const output = formatSarif([result]);
+    const parsed = JSON.parse(output);
+    const rule = parsed.runs[0].tool.driver.rules[0];
+    expect(rule.shortDescription.text).toBe("frontmatter/name-required");
+  });
+
+  it("reads version from package.json", () => {
+    const output = formatSarif([]);
+    const parsed = JSON.parse(output);
+    expect(parsed.runs[0].tool.driver.version).toMatch(/^\d+\.\d+\.\d+/);
+  });
 });

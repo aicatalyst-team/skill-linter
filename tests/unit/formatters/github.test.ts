@@ -45,4 +45,63 @@ describe("GitHub formatter", () => {
 
     expect(formatGithub([result])).toBe("");
   });
+
+  it("includes endLine and endColumn when present", () => {
+    const result: LintResult = {
+      skillPath: "/test/my-skill",
+      diagnostics: [
+        {
+          ruleId: "content/body-token-budget",
+          severity: "warning",
+          message: "Too many tokens",
+          location: {
+            file: "SKILL.md",
+            startLine: 5,
+            startColumn: 1,
+            endLine: 50,
+            endColumn: 10,
+          },
+          category: "content",
+        },
+      ],
+      errorCount: 0,
+      warningCount: 1,
+      infoCount: 0,
+      fixableCount: 0,
+    };
+
+    const output = formatGithub([result]);
+    expect(output).toContain("line=5,col=1,endLine=50,endColumn=10,title=");
+  });
+
+  it("escapes special characters in messages", () => {
+    const result: LintResult = {
+      skillPath: "/test/my-skill",
+      diagnostics: [
+        {
+          ruleId: "test/rule",
+          severity: "error",
+          message: "Found pattern:: with\nnewline",
+          location: { file: "SKILL.md", startLine: 1 },
+          category: "security",
+        },
+      ],
+      errorCount: 1,
+      warningCount: 0,
+      infoCount: 0,
+      fixableCount: 0,
+    };
+
+    const output = formatGithub([result]);
+    // :: in message should be escaped as %3A%3A
+    expect(output).toContain("Found pattern%3A%3A");
+    // newline in message should be escaped as %0A
+    expect(output).toContain("with%0Anewline");
+    // The message portion (after title=test/rule::) should not contain raw newlines
+    // Extract the message by splitting on the annotation separator
+    const parts = output.split("title=test/rule::");
+    expect(parts).toHaveLength(2);
+    const messagePart = parts[1];
+    expect(messagePart.trim()).toBe("Found pattern%3A%3A with%0Anewline");
+  });
 });

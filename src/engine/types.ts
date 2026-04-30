@@ -27,6 +27,7 @@ export interface Diagnostic {
   location: DiagnosticLocation;
   fix?: DiagnosticFix;
   category: RuleCategory;
+  ruleDescription?: string;
 }
 
 export interface RuleMeta {

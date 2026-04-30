@@ -6,6 +6,14 @@ const SEVERITY_COMMAND: Record<Severity, string> = {
   info: "notice",
 };
 
+function escapeAnnotationValue(value: string): string {
+  return value
+    .replace(/%/g, "%25")
+    .replace(/\r/g, "%0D")
+    .replace(/\n/g, "%0A")
+    .replace(/::/g, "%3A%3A");
+}
+
 export function formatGithub(results: LintResult[]): string {
   const lines: string[] = [];
 
@@ -15,9 +23,19 @@ export function formatGithub(results: LintResult[]): string {
       const file = diag.location.file;
       const line = diag.location.startLine ?? 1;
       const col = diag.location.startColumn ?? 1;
-      const title = diag.ruleId;
+      const title = escapeAnnotationValue(diag.ruleId);
+      const message = escapeAnnotationValue(diag.message);
 
-      lines.push(`::${cmd} file=${file},line=${line},col=${col},title=${title}::${diag.message}`);
+      let params = `file=${file},line=${line},col=${col}`;
+      if (diag.location.endLine) {
+        params += `,endLine=${diag.location.endLine}`;
+      }
+      if (diag.location.endColumn) {
+        params += `,endColumn=${diag.location.endColumn}`;
+      }
+      params += `,title=${title}`;
+
+      lines.push(`::${cmd} ${params}::${message}`);
     }
   }
 

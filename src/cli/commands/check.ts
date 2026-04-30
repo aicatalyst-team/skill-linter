@@ -28,13 +28,22 @@ export const checkCommand = new Command("check")
   .option("--category <name>", "Run only rules in a category (repeatable)", collect, [])
   .option("-c, --config <path>", "Path to config file")
   .option("--no-config", "Ignore config files, use defaults")
-  .option("-q, --quiet", "Suppress all output except errors")
+  .option("-q, --quiet", "Suppress warnings and info, show only errors")
+  .option("-v, --verbose", "Show all skills including those with no issues")
   .action(async (paths: string[], options) => {
     registerAllRules();
 
-    const config = options.config !== false
-      ? await loadConfig(typeof options.config === "string" ? options.config : undefined)
-      : await loadConfig();
+    let config;
+    try {
+      config = options.config !== false
+        ? await loadConfig(typeof options.config === "string" ? options.config : undefined)
+        : await loadConfig();
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : String(err);
+      console.error(`Config error: ${msg}`);
+      process.exitCode = 2;
+      return;
+    }
 
     const resolvedPaths: string[] = [];
     const tempDirs: string[] = [];
@@ -84,6 +93,8 @@ export const checkCommand = new Command("check")
 
     resolvedPaths.push(...localPaths);
 
+    const startTime = performance.now();
+
     const lintResults = await Promise.all(
       resolvedPaths.map(async (path) => {
         const dirNameOverride = dirNameOverrideMap.get(path);
@@ -117,7 +128,7 @@ export const checkCommand = new Command("check")
       }
     }
 
-    const results = lintResults.map(({ result }) => result);
+    let results = lintResults.map(({ result }) => result);
 
     if (options.fix) {
       for (const result of results) {
@@ -130,22 +141,40 @@ export const checkCommand = new Command("check")
       }
     }
 
-    const output = format(results, options.format as FormatType);
-    if (!options.quiet) {
-      process.stdout.write(output);
+    // --quiet: filter to errors only (suppress warnings and info)
+    if (options.quiet) {
+      results = results.map((r) => {
+        const errors = r.diagnostics.filter((d) => d.severity === "error");
+        return {
+          ...r,
+          diagnostics: errors,
+          errorCount: errors.length,
+          warningCount: 0,
+          infoCount: 0,
+          fixableCount: errors.filter((d) => d.fix !== undefined).length,
+        };
+      });
     }
+
+    const elapsedMs = performance.now() - startTime;
+
+    const output = format(results, options.format as FormatType, {
+      verbose: options.verbose,
+      elapsedMs,
+    });
+    process.stdout.write(output);
 
     for (const dir of new Set(tempDirs)) {
       rmSync(dir, { recursive: true, force: true });
     }
 
-    const hasErrors = results.some((r) => r.errorCount > 0);
-    const hasWarnings = results.some((r) => r.warningCount > 0);
+    // Exit code is based on unfiltered results
+    const allResults = lintResults.map(({ result }) => result);
+    const hasErrors = allResults.some((r) => r.errorCount > 0);
+    const hasWarnings = allResults.some((r) => r.warningCount > 0);
 
-    if (hasErrors) {
+    if (hasErrors || (options.strict && hasWarnings)) {
       process.exitCode = 1;
-    } else if (options.strict && hasWarnings) {
-      process.exitCode = 2;
     }
   });
 

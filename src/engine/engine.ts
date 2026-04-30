@@ -189,6 +189,7 @@ export async function lint(
           },
           fix: descriptor.fix,
           category: rule.meta.category,
+          ruleDescription: rule.meta.description,
         });
       },
     };

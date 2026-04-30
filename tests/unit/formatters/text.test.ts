@@ -3,7 +3,7 @@ import { formatText } from "../../../src/formatters/text.js";
 import type { LintResult } from "../../../src/engine/types.js";
 
 describe("Text formatter", () => {
-  it("shows 'No issues found' for clean results", () => {
+  it("shows aggregate summary for clean results", () => {
     const result: LintResult = {
       skillPath: "/test/my-skill",
       diagnostics: [],
@@ -14,7 +14,24 @@ describe("Text formatter", () => {
     };
 
     const output = formatText([result]);
+    expect(output).toContain("1 skill checked, no problems found");
+    // Clean skills are not listed individually in default mode
+    expect(output).not.toContain("No issues found");
+  });
+
+  it("shows 'No issues found' per skill in verbose mode", () => {
+    const result: LintResult = {
+      skillPath: "/test/my-skill",
+      diagnostics: [],
+      errorCount: 0,
+      warningCount: 0,
+      infoCount: 0,
+      fixableCount: 0,
+    };
+
+    const output = formatText([result], { verbose: true });
     expect(output).toContain("No issues found");
+    expect(output).toContain("1 skill checked, no problems found");
   });
 
   it("shows diagnostics sorted by severity then line", () => {
@@ -104,7 +121,7 @@ describe("Text formatter", () => {
     expect(output).toContain("fixable with --fix");
   });
 
-  it("uses displayPath when provided", () => {
+  it("uses displayPath when provided in verbose mode", () => {
     const result: LintResult = {
       skillPath: "/tmp/some-temp-path/my-skill",
       displayPath: "owner/repo:skills/my-skill",
@@ -115,7 +132,100 @@ describe("Text formatter", () => {
       fixableCount: 0,
     };
 
+    const output = formatText([result], { verbose: true });
+    expect(output).toContain("owner/repo:skills/my-skill");
+  });
+
+  it("shows displayPath for skills with issues regardless of verbose", () => {
+    const result: LintResult = {
+      skillPath: "/tmp/some-temp-path/my-skill",
+      displayPath: "owner/repo:skills/my-skill",
+      diagnostics: [
+        {
+          ruleId: "frontmatter/name-required",
+          severity: "error",
+          message: "missing name",
+          location: { file: "SKILL.md", startLine: 1 },
+          category: "frontmatter",
+        },
+      ],
+      errorCount: 1,
+      warningCount: 0,
+      infoCount: 0,
+      fixableCount: 0,
+    };
+
     const output = formatText([result]);
     expect(output).toContain("owner/repo:skills/my-skill");
+  });
+
+  it("shows aggregate summary across multiple skills", () => {
+    const results: LintResult[] = [
+      {
+        skillPath: "/test/skill-a",
+        diagnostics: [
+          {
+            ruleId: "frontmatter/name-required",
+            severity: "error",
+            message: "missing",
+            location: { file: "SKILL.md", startLine: 1 },
+            category: "frontmatter",
+          },
+        ],
+        errorCount: 1,
+        warningCount: 0,
+        infoCount: 0,
+        fixableCount: 0,
+      },
+      {
+        skillPath: "/test/skill-b",
+        diagnostics: [
+          {
+            ruleId: "content/body-not-empty",
+            severity: "warning",
+            message: "empty body",
+            location: { file: "SKILL.md", startLine: 1 },
+            category: "content",
+          },
+        ],
+        errorCount: 0,
+        warningCount: 1,
+        infoCount: 0,
+        fixableCount: 0,
+      },
+      {
+        skillPath: "/test/skill-c",
+        diagnostics: [],
+        errorCount: 0,
+        warningCount: 0,
+        infoCount: 0,
+        fixableCount: 0,
+      },
+    ];
+
+    const output = formatText(results);
+    expect(output).toContain("3 skills checked");
+    expect(output).toContain("2 problems");
+    expect(output).toContain("1 error");
+    expect(output).toContain("1 warning");
+    // Clean skill-c should not appear in default mode
+    expect(output).not.toContain("skill-c");
+  });
+
+  it("shows timing in aggregate summary when provided", () => {
+    const result: LintResult = {
+      skillPath: "/test/my-skill",
+      diagnostics: [],
+      errorCount: 0,
+      warningCount: 0,
+      infoCount: 0,
+      fixableCount: 0,
+    };
+
+    const output = formatText([result], { elapsedMs: 150 });
+    expect(output).toContain("150ms");
+
+    const output2 = formatText([result], { elapsedMs: 2500 });
+    expect(output2).toContain("2.5s");
   });
 });

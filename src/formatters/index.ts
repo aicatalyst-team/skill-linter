@@ -6,10 +6,19 @@ import { formatGithub } from "./github.js";
 
 export type FormatType = "text" | "json" | "sarif" | "github";
 
-export function format(results: LintResult[], type: FormatType): string {
+export interface FormatOptions {
+  verbose?: boolean;
+  elapsedMs?: number;
+}
+
+export function format(
+  results: LintResult[],
+  type: FormatType,
+  options?: FormatOptions,
+): string {
   switch (type) {
     case "text":
-      return formatText(results);
+      return formatText(results, options);
     case "json":
       return formatJson(results);
     case "sarif":

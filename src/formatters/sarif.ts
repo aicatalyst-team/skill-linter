@@ -5,6 +5,7 @@ import {
   SarifRuleBuilder,
 } from "node-sarif-builder";
 import type { LintResult, Severity } from "../engine/types.js";
+import { VERSION } from "../version.js";
 
 const SEVERITY_TO_LEVEL: Record<Severity, "error" | "warning" | "note"> = {
   error: "error",
@@ -16,7 +17,7 @@ export function formatSarif(results: LintResult[]): string {
   const sarifBuilder = new SarifBuilder();
   const runBuilder = new SarifRunBuilder().initSimple({
     toolDriverName: "skilleval",
-    toolDriverVersion: "0.1.0",
+    toolDriverVersion: VERSION,
   });
 
   const registeredRules = new Set<string>();
@@ -26,7 +27,7 @@ export function formatSarif(results: LintResult[]): string {
       if (!registeredRules.has(diag.ruleId)) {
         const ruleBuilder = new SarifRuleBuilder().initSimple({
           ruleId: diag.ruleId,
-          shortDescriptionText: diag.ruleId,
+          shortDescriptionText: diag.ruleDescription ?? diag.ruleId,
         });
         runBuilder.addRule(ruleBuilder);
         registeredRules.add(diag.ruleId);

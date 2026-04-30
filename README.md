@@ -111,9 +111,10 @@ skilleval check github:org/repo
 | `--category <name>` | Run only rules in a category (repeatable) |
 | `-c, --config <path>` | Path to config file |
 | `--no-config` | Ignore config files, use defaults |
-| `-q, --quiet` | Suppress all output except errors |
+| `-q, --quiet` | Suppress warnings and info, show only errors |
+| `-v, --verbose` | Show all skills including those with no issues |
 
-Exit codes: `0` = pass, `1` = errors found, `2` = warnings with `--strict`, `3` = CLI error.
+Exit codes: `0` = pass, `1` = errors found (or warnings with `--strict`), `2` = config error, `3` = CLI error.
 
 ### `skilleval rules`
 
