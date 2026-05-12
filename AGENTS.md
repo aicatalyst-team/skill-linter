@@ -19,7 +19,7 @@ TypeScript CLI linter for AI agent skill files following the [Agent Skills speci
 npm run build          # Compile TypeScript
 npm test               # Run all tests (vitest)
 npx tsc --noEmit       # Type check without emitting
-node bin/skill-linter.js check <path>   # Run the linter locally
+node bin/cli.js check <path>   # Run the linter locally
 ```
 
 ## Architecture

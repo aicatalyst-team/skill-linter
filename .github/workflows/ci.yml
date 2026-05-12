@@ -23,4 +23,4 @@ jobs:
       - run: npm test
       - run: npm run build
       - name: Smoke test
-        run: node bin/skill-linter.js check tests/fixtures/valid/minimal-skill
+        run: node bin/cli.js check tests/fixtures/valid/minimal-skill

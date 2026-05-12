@@ -8,8 +8,8 @@ See AGENTS.md for full project context, architecture, and how to add rules.
 npm run build          # Compile
 npm test               # Run tests
 npx tsc --noEmit       # Type check
-node bin/skill-linter.js check tests/fixtures/valid/full-skill   # Smoke test (local)
-node bin/skill-linter.js check https://github.com/org/repo       # Smoke test (remote)
+node bin/cli.js check tests/fixtures/valid/full-skill   # Smoke test (local)
+node bin/cli.js check https://github.com/org/repo       # Smoke test (remote)
 ```
 
 ## Guidelines
