@@ -1,4 +1,4 @@
-# skilleval
+# skill-linter
 
 See AGENTS.md for full project context, architecture, and how to add rules.
 
@@ -8,8 +8,8 @@ See AGENTS.md for full project context, architecture, and how to add rules.
 npm run build          # Compile
 npm test               # Run tests
 npx tsc --noEmit       # Type check
-node bin/skilleval.js check tests/fixtures/valid/full-skill   # Smoke test (local)
-node bin/skilleval.js check https://github.com/org/repo       # Smoke test (remote)
+node bin/skill-linter.js check tests/fixtures/valid/full-skill   # Smoke test (local)
+node bin/skill-linter.js check https://github.com/org/repo       # Smoke test (remote)
 ```
 
 ## Guidelines
@@ -21,5 +21,5 @@ node bin/skilleval.js check https://github.com/org/repo       # Smoke test (remo
 - No comments unless the WHY is non-obvious
 - When adding a rule: create the rule file, register it in `src/rules/index.ts`, add to all three presets, write tests with the `runRule()` helper
 - Security rules should test both bare patterns and patterns in mention context (quotes, backticks, code blocks)
-- Inline suppression (`<!-- skilleval-disable-next-line -->`) is handled by the engine — rules don't need to implement it
+- Inline suppression (`<!-- skill-linter-disable-next-line -->`) is handled by the engine — rules don't need to implement it
 - `--deep` flag also triages security findings via LLM to dismiss false positives

@@ -27,7 +27,7 @@ describe("SARIF formatter", () => {
     expect(parsed.$schema).toContain("sarif");
     expect(parsed.version).toBe("2.1.0");
     expect(parsed.runs).toHaveLength(1);
-    expect(parsed.runs[0].tool.driver.name).toBe("skilleval");
+    expect(parsed.runs[0].tool.driver.name).toBe("skill-linter");
     expect(parsed.runs[0].results).toHaveLength(1);
     expect(parsed.runs[0].results[0].ruleId).toBe("frontmatter/name-required");
     expect(parsed.runs[0].results[0].level).toBe("error");

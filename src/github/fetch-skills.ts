@@ -36,7 +36,7 @@ function findSkillMds(dir: string): string[] {
 export async function fetchRemoteSkills(ref: GitHubRef): Promise<FetchResult> {
   const client = createGitHubClient();
   const treeRef = ref.ref ?? "HEAD";
-  const tempDir = mkdtempSync(join(tmpdir(), "skilleval-"));
+  const tempDir = mkdtempSync(join(tmpdir(), "skill-linter-"));
 
   await client.downloadTarball(ref.owner, ref.repo, treeRef, tempDir);
 

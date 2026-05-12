@@ -1,4 +1,4 @@
-# Contributing to skilleval
+# Contributing to skill-linter
 
 ## Prerequisites
 
@@ -8,8 +8,8 @@
 ## Getting started
 
 ```bash
-git clone git@github.com:natifridman/skilleval.git
-cd skilleval
+git clone git@github.com:aicatalyst-team/skill-linter.git
+cd skill-linter
 npm install
 npm run build
 npm test
@@ -27,8 +27,8 @@ npm run dev            # Watch mode (rebuild on change)
 Run the linter locally against a skill directory or GitHub repo:
 
 ```bash
-node bin/skilleval.js check path/to/skill
-node bin/skilleval.js check https://github.com/org/repo
+node bin/skill-linter.js check path/to/skill
+node bin/skill-linter.js check https://github.com/org/repo
 ```
 
 ## Adding a new rule
@@ -87,7 +87,7 @@ For integration tests, add skill directories to `tests/fixtures/`.
 - [ ] New rule is added to all three presets
 - [ ] Tests cover both positive (detects issue) and negative (passes clean input) cases
 - [ ] Security rules: test both context-aware scenarios (pattern in prose vs. in quotes/code blocks)
-- [ ] Test that `<!-- skilleval-disable-next-line rule-id -->` suppresses the rule
+- [ ] Test that `<!-- skill-linter-disable-next-line rule-id -->` suppresses the rule
 - [ ] No unrelated changes
 
 ## Code style
@@ -100,4 +100,4 @@ For integration tests, add skill directories to `tests/fixtures/`.
 
 ## Reporting issues
 
-Open an issue at [github.com/natifridman/skilleval/issues](https://github.com/natifridman/skilleval/issues).
+Open an issue at [github.com/aicatalyst-team/skill-linter/issues](https://github.com/aicatalyst-team/skill-linter/issues).

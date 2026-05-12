@@ -1,4 +1,4 @@
-# skilleval
+# skill-linter
 
 Linter for AI agent skill files following the [Agent Skills specification](https://agentskills.io).
 
@@ -7,31 +7,31 @@ Linter for AI agent skill files following the [Agent Skills specification](https
 ## Install
 
 ```bash
-npx skilleval check ./my-skill
+npx skill-linter check ./my-skill
 ```
 
 Or install globally:
 
 ```bash
-npm install -g skilleval
+npm install -g skill-linter
 ```
 
 ## Run from Source
 
 ```bash
-git clone https://github.com/natifridman/skilleval.git
-cd skilleval
+git clone https://github.com/aicatalyst-team/skill-linter.git
+cd skill-linter
 npm install
 npm run build
 npm link
 ```
 
-This makes the `skilleval` command available globally, so you can use it like the published package:
+This makes the `skill-linter` command available globally, so you can use it like the published package:
 
 ```bash
-skilleval check ./my-skill
-skilleval check https://github.com/org/repo
-skilleval rules
+skill-linter check ./my-skill
+skill-linter check https://github.com/org/repo
+skill-linter rules
 ```
 
 To rebuild after making changes:
@@ -49,7 +49,7 @@ npm run dev
 To unlink when done:
 
 ```bash
-npm unlink -g skilleval
+npm unlink -g skill-linter
 ```
 
 Requires Node.js >= 22.
@@ -58,45 +58,45 @@ Requires Node.js >= 22.
 
 ```bash
 # Lint a skill directory
-skilleval check ./my-skill
+skill-linter check ./my-skill
 
 # Lint multiple skills
-skilleval check ./skill-a ./skill-b
+skill-linter check ./skill-a ./skill-b
 
 # Lint skills from a GitHub repo
-skilleval check https://github.com/org/repo
-skilleval check github:org/repo
+skill-linter check https://github.com/org/repo
+skill-linter check github:org/repo
 
 # Target a specific skill in a repo
-skilleval check https://github.com/org/repo/tree/main/skills/my-skill
+skill-linter check https://github.com/org/repo/tree/main/skills/my-skill
 
 # Scaffold a new skill
-skilleval new my-new-skill
+skill-linter new my-new-skill
 
 # List all 47 rules
-skilleval rules
+skill-linter rules
 ```
 
 ## Commands
 
-### `skilleval check <paths...>`
+### `skill-linter check <paths...>`
 
 Lint and evaluate skill directories.
 
 ```bash
-skilleval check ./my-skill
-skilleval check ./my-skill --format json
-skilleval check ./my-skill --format sarif > results.sarif
-skilleval check ./my-skill --format github
-skilleval check ./my-skill --strict
-skilleval check ./my-skill --fix
-skilleval check ./my-skill --deep
-skilleval check ./my-skill --deep --deep-provider vertex
+skill-linter check ./my-skill
+skill-linter check ./my-skill --format json
+skill-linter check ./my-skill --format sarif > results.sarif
+skill-linter check ./my-skill --format github
+skill-linter check ./my-skill --strict
+skill-linter check ./my-skill --fix
+skill-linter check ./my-skill --deep
+skill-linter check ./my-skill --deep --deep-provider vertex
 
 # Remote GitHub repos
-skilleval check https://github.com/org/repo
-skilleval check https://github.com/org/repo/tree/main/skills/my-skill
-skilleval check github:org/repo
+skill-linter check https://github.com/org/repo
+skill-linter check https://github.com/org/repo/tree/main/skills/my-skill
+skill-linter check github:org/repo
 ```
 
 | Flag | Description |
@@ -116,21 +116,21 @@ skilleval check github:org/repo
 
 Exit codes: `0` = pass, `1` = errors found (or warnings with `--strict`), `2` = config error, `3` = CLI error.
 
-### `skilleval rules`
+### `skill-linter rules`
 
 List all available rules.
 
 ```bash
-skilleval rules
-skilleval rules --category security
-skilleval rules --severity error
+skill-linter rules
+skill-linter rules --category security
+skill-linter rules --severity error
 ```
 
-### `skilleval init`
+### `skill-linter init`
 
-Create a `.skillevalrc.json` config file in the current directory.
+Create a `.skill-linterrc.json` config file in the current directory.
 
-### `skilleval new <name>`
+### `skill-linter new <name>`
 
 Scaffold a new skill directory with a `SKILL.md` template.
 
@@ -212,7 +212,7 @@ Based on [Snyk ToxicSkills](https://snyk.io/blog/toxicskills-malicious-ai-agent-
 
 ## Configuration
 
-Create `.skillevalrc.json` (or use `skilleval init`):
+Create `.skill-linterrc.json` (or use `skill-linter init`):
 
 ```json
 {
@@ -225,7 +225,7 @@ Create `.skillevalrc.json` (or use `skilleval init`):
 }
 ```
 
-Config is discovered via [lilconfig](https://github.com/antonk52/lilconfig): `.skillevalrc.json`, `.skillevalrc.yaml`, `skilleval.config.js`, or `package.json["skilleval"]`.
+Config is discovered via [lilconfig](https://github.com/antonk52/lilconfig): `.skill-linterrc.json`, `.skill-linterrc.yaml`, `skill-linter.config.js`, or `package.json["skill-linter"]`.
 
 ### Presets
 
@@ -240,10 +240,10 @@ Config is discovered via [lilconfig](https://github.com/antonk52/lilconfig): `.s
 Suppress specific findings with HTML comments in your SKILL.md:
 
 ```markdown
-<!-- skilleval-disable-next-line -->
+<!-- skill-linter-disable-next-line -->
 This line's diagnostics are suppressed.
 
-<!-- skilleval-disable-next-line security/no-prompt-injection -->
+<!-- skill-linter-disable-next-line security/no-prompt-injection -->
 Only the specified rule is suppressed on the next line.
 ```
 
@@ -252,9 +252,9 @@ Only the specified rule is suppressed on the next line.
 Pass a GitHub URL instead of a local path to scan skills hosted on GitHub:
 
 ```bash
-skilleval check https://github.com/org/repo
-skilleval check https://github.com/org/repo/tree/main/skills/my-skill
-skilleval check github:org/repo
+skill-linter check https://github.com/org/repo
+skill-linter check https://github.com/org/repo/tree/main/skills/my-skill
+skill-linter check github:org/repo
 ```
 
 Authentication uses `gh` CLI (if installed and logged in) with a fallback to the `GITHUB_TOKEN` environment variable. Public repos work without authentication.
@@ -276,14 +276,14 @@ When `--deep` is enabled, the LLM also triages static security findings and dism
 **Anthropic API:**
 ```bash
 export ANTHROPIC_API_KEY=sk-ant-...
-skilleval check ./my-skill --deep
+skill-linter check ./my-skill --deep
 ```
 
 **Google Cloud Vertex AI:**
 ```bash
 export GOOGLE_CLOUD_PROJECT=my-project
 export GOOGLE_CLOUD_LOCATION=us-east5
-skilleval check ./my-skill --deep --deep-provider vertex
+skill-linter check ./my-skill --deep --deep-provider vertex
 ```
 
 Requires installing the provider SDK:
@@ -298,7 +298,7 @@ npm install @anthropic-ai/vertex-sdk   # For Vertex AI
 
 ```yaml
 - uses: actions/setup-node@v4
-- run: npx skilleval check ./skills --format sarif > results.sarif
+- run: npx skill-linter check ./skills --format sarif > results.sarif
 - uses: github/codeql-action/upload-sarif@v3
   with:
     sarif_file: results.sarif
@@ -307,13 +307,13 @@ npm install @anthropic-ai/vertex-sdk   # For Vertex AI
 ### GitHub Annotations
 
 ```yaml
-- run: npx skilleval check ./skills --format github
+- run: npx skill-linter check ./skills --format github
 ```
 
 ## Programmatic API
 
 ```typescript
-import { lint, registerAllRules } from "skilleval";
+import { lint, registerAllRules } from "skill-linter";
 
 registerAllRules();
 const result = await lint("./my-skill");

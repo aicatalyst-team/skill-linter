@@ -1,12 +1,12 @@
 {
-  "name": "skilleval",
+  "name": "skill-linter",
   "version": "0.1.0",
   "description": "Linter, scorer, and evaluator for AI agent skill files (Agent Skills spec)",
   "type": "module",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
   "bin": {
-    "skilleval": "./bin/skilleval.js"
+    "skill-linter": "./bin/skill-linter.js"
   },
   "exports": {
     ".": {
@@ -43,6 +43,10 @@
     "copilot",
     "ai-agent"
   ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aicatalyst-team/skill-linter.git"
+  },
   "license": "MIT",
   "engines": {
     "node": ">=22"

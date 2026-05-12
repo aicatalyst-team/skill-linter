@@ -11,15 +11,15 @@ const DEFAULT_CONFIG = `{
 `;
 
 export const initCommand = new Command("init")
-  .description("Create a .skillevalrc.json config file")
+  .description("Create a .skill-linterrc.json config file")
   .action(() => {
-    const configPath = join(process.cwd(), ".skillevalrc.json");
+    const configPath = join(process.cwd(), ".skill-linterrc.json");
 
     if (existsSync(configPath)) {
-      console.log(pc.yellow("  .skillevalrc.json already exists"));
+      console.log(pc.yellow("  .skill-linterrc.json already exists"));
       return;
     }
 
     writeFileSync(configPath, DEFAULT_CONFIG, "utf-8");
-    console.log(pc.green("  Created .skillevalrc.json"));
+    console.log(pc.green("  Created .skill-linterrc.json"));
   });

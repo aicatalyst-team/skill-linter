@@ -33,7 +33,7 @@ export const rulesCommand = new Command("rules")
     }
 
     console.log();
-    console.log(`  ${pc.bold("skilleval rules")} (${rules.length} rules)`);
+    console.log(`  ${pc.bold("skill-linter rules")} (${rules.length} rules)`);
     console.log();
 
     for (const [category, catRules] of grouped) {

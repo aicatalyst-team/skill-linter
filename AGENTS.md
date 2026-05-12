@@ -1,4 +1,4 @@
-# skilleval
+# skill-linter
 
 TypeScript CLI linter for AI agent skill files following the [Agent Skills specification](https://agentskills.io). Validates SKILL.md files across 5 categories: structural, frontmatter, content, security, and best practices.
 
@@ -19,7 +19,7 @@ TypeScript CLI linter for AI agent skill files following the [Agent Skills speci
 npm run build          # Compile TypeScript
 npm test               # Run all tests (vitest)
 npx tsc --noEmit       # Type check without emitting
-node bin/skilleval.js check <path>   # Run the linter locally
+node bin/skill-linter.js check <path>   # Run the linter locally
 ```
 
 ## Architecture
@@ -157,7 +157,7 @@ The `--format` flag controls output: `text` (default terminal), `json` (structur
 
 ## Inline suppression
 
-The engine (`src/engine/engine.ts`) supports `<!-- skilleval-disable-next-line [rule-id] -->` HTML comments in SKILL.md. Suppressed lines are parsed before rules run and filtered in the `report()` callback — transparent to rules.
+The engine (`src/engine/engine.ts`) supports `<!-- skill-linter-disable-next-line [rule-id] -->` HTML comments in SKILL.md. Suppressed lines are parsed before rules run and filtered in the `report()` callback — transparent to rules.
 
 ## Remote GitHub scanning
 

@@ -48,11 +48,11 @@ function resolveRuleOptions(
 }
 
 const SUPPRESS_NEXT_LINE_RE =
-  /<!--\s*skilleval-disable-next-line(?:\s+([\w/,-]+))?\s*-->/;
+  /<!--\s*skill-linter-disable-next-line(?:\s+([\w/,-]+))?\s*-->/;
 const SUPPRESS_DISABLE_RE =
-  /<!--\s*skilleval-disable(?:\s+([\w/,-]+))?\s*-->/;
+  /<!--\s*skill-linter-disable(?:\s+([\w/,-]+))?\s*-->/;
 const SUPPRESS_ENABLE_RE =
-  /<!--\s*skilleval-enable(?:\s+([\w/,-]+))?\s*-->/;
+  /<!--\s*skill-linter-enable(?:\s+([\w/,-]+))?\s*-->/;
 
 function parseRuleIds(raw: string | undefined): Set<string> | null {
   if (!raw) return null;
@@ -89,7 +89,7 @@ function parseSuppressedLines(
     if (enableMatch) {
       const enabledRules = parseRuleIds(enableMatch[1]);
       if (enabledRules === null) {
-        // <!-- skilleval-enable --> clears all ranges
+        // <!-- skill-linter-enable --> clears all ranges
         activeRanges = [];
       } else {
         // Remove specific rules from active ranges

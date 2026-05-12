@@ -16,7 +16,7 @@ const SEVERITY_TO_LEVEL: Record<Severity, "error" | "warning" | "note"> = {
 export function formatSarif(results: LintResult[]): string {
   const sarifBuilder = new SarifBuilder();
   const runBuilder = new SarifRunBuilder().initSimple({
-    toolDriverName: "skilleval",
+    toolDriverName: "skill-linter",
     toolDriverVersion: VERSION,
   });
 

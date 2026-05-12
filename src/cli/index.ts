@@ -6,7 +6,7 @@ import { newCommand } from "./commands/new.js";
 import { VERSION } from "../version.js";
 
 const program = new Command()
-  .name("skilleval")
+  .name("skill-linter")
   .description("Linter, scorer, and evaluator for AI agent skill files")
   .version(VERSION);
 
