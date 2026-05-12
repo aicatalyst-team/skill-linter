@@ -27,8 +27,8 @@ npm run dev            # Watch mode (rebuild on change)
 Run the linter locally against a skill directory or GitHub repo:
 
 ```bash
-node bin/cli.js check path/to/skill
-node bin/cli.js check https://github.com/org/repo
+node bin/skill-linter.js check path/to/skill
+node bin/skill-linter.js check https://github.com/org/repo
 ```
 
 ## Adding a new rule
