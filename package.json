@@ -1,6 +1,6 @@
 {
   "name": "skill-linter",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Linter, scorer, and evaluator for AI agent skill files (Agent Skills spec)",
   "type": "module",
   "main": "./dist/index.js",
