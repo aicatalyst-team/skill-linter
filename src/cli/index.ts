@@ -10,7 +10,7 @@ const program = new Command()
   .description("Linter, scorer, and evaluator for AI agent skill files")
   .version(VERSION);
 
-program.addCommand(checkCommand, { isDefault: true });
+program.addCommand(checkCommand);
 program.addCommand(rulesCommand);
 program.addCommand(initCommand);
 program.addCommand(newCommand);
