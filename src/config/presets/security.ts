@@ -54,4 +54,5 @@ export const security: Record<string, RuleSeverityConfig> = {
   "best-practices/no-time-sensitive-content": "off",
   "best-practices/no-excessive-negation": "off",
   "best-practices/non-descriptive-filenames": "off",
+  "best-practices/bash-overly-permissive": "off",
 };

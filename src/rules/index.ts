@@ -48,6 +48,7 @@ import { descriptionNoFirstPerson } from "./best-practices/description-no-first-
 import { noTimeSensitiveContent } from "./best-practices/no-time-sensitive-content.js";
 import { noExcessiveNegation } from "./best-practices/no-excessive-negation.js";
 import { nonDescriptiveFilenames } from "./best-practices/non-descriptive-filenames.js";
+import { bashOverlyPermissive } from "./best-practices/bash-overly-permissive.js";
 import { nameNoReservedWords } from "./frontmatter/name-no-reserved-words.js";
 import { licenseFormat } from "./frontmatter/license-format.js";
 import { noAsciiArt } from "./content/no-ascii-art.js";
@@ -109,6 +110,7 @@ const allRules = [
   noTimeSensitiveContent,
   noExcessiveNegation,
   nonDescriptiveFilenames,
+  bashOverlyPermissive,
 ];
 
 export function registerAllRules(): void {

@@ -134,7 +134,7 @@ Create a `.skill-linterrc.json` config file in the current directory.
 
 Scaffold a new skill directory with a `SKILL.md` template.
 
-## Rules (47)
+## Rules (48)
 
 ### Structural (4)
 
@@ -191,7 +191,7 @@ Based on [Snyk ToxicSkills](https://snyk.io/blog/toxicskills-malicious-ai-agent-
 | `security/no-secret-literals` | warning | Detects hardcoded secrets |
 | `security/no-password-archives` | error | Detects password-protected archives |
 
-### Best Practices (14)
+### Best Practices (15)
 
 | Rule | Severity | Description |
 |------|----------|-------------|
@@ -209,6 +209,7 @@ Based on [Snyk ToxicSkills](https://snyk.io/blog/toxicskills-malicious-ai-agent-
 | `best-practices/no-time-sensitive-content` | info | Avoid time-sensitive language that becomes stale |
 | `best-practices/no-excessive-negation` | info | Tell agents what to do, not what not to do |
 | `best-practices/non-descriptive-filenames` | info | Use descriptive filenames, not generic ones |
+| `best-practices/bash-overly-permissive` | info | Broad shell tool could be narrowed to specific command patterns |
 
 ## Configuration
 
