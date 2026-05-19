@@ -7,13 +7,13 @@ Linter for AI agent skill files following the [Agent Skills specification](https
 ## Install
 
 ```bash
-npx skill-linter check ./my-skill
+pnpm dlx skill-linter check ./my-skill
 ```
 
 Or install globally:
 
 ```bash
-npm install -g skill-linter
+pnpm add -g skill-linter
 ```
 
 ## Run from Source
@@ -21,9 +21,9 @@ npm install -g skill-linter
 ```bash
 git clone https://github.com/aicatalyst-team/skill-linter.git
 cd skill-linter
-npm install
-npm run build
-npm link
+pnpm install
+pnpm run build
+pnpm link --global .
 ```
 
 This makes the `skill-linter` command available globally, so you can use it like the published package:
@@ -37,19 +37,19 @@ skill-linter rules
 To rebuild after making changes:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 Or use watch mode for continuous rebuilds during development:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 To unlink when done:
 
 ```bash
-npm unlink -g skill-linter
+pnpm unlink --global
 ```
 
 Requires Node.js >= 22.
@@ -288,8 +288,8 @@ skill-linter check ./my-skill --deep --deep-provider vertex
 
 Requires installing the provider SDK:
 ```bash
-npm install @anthropic-ai/sdk          # For Anthropic
-npm install @anthropic-ai/vertex-sdk   # For Vertex AI
+pnpm add @anthropic-ai/sdk          # For Anthropic
+pnpm add @anthropic-ai/vertex-sdk   # For Vertex AI
 ```
 
 ## CI/CD
@@ -298,7 +298,7 @@ npm install @anthropic-ai/vertex-sdk   # For Vertex AI
 
 ```yaml
 - uses: actions/setup-node@v4
-- run: npx skill-linter check ./skills --format sarif > results.sarif
+- run: pnpm dlx skill-linter check ./skills --format sarif > results.sarif
 - uses: github/codeql-action/upload-sarif@v3
   with:
     sarif_file: results.sarif
@@ -307,7 +307,7 @@ npm install @anthropic-ai/vertex-sdk   # For Vertex AI
 ### GitHub Annotations
 
 ```yaml
-- run: npx skill-linter check ./skills --format github
+- run: pnpm dlx skill-linter check ./skills --format github
 ```
 
 ## Programmatic API

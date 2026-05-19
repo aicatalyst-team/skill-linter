@@ -3,25 +3,25 @@
 ## Prerequisites
 
 - Node.js >= 22
-- npm
+- pnpm >= 11
 
 ## Getting started
 
 ```bash
 git clone git@github.com:aicatalyst-team/skill-linter.git
 cd skill-linter
-npm install
-npm run build
-npm test
+pnpm install
+pnpm run build
+pnpm test
 ```
 
 ## Development workflow
 
 ```bash
-npm run build          # Compile TypeScript
-npm test               # Run all tests
-npx tsc --noEmit       # Type check without emitting
-npm run dev            # Watch mode (rebuild on change)
+pnpm run build         # Compile TypeScript
+pnpm test              # Run all tests
+pnpm tsc --noEmit      # Type check without emitting
+pnpm run dev           # Watch mode (rebuild on change)
 ```
 
 Run the linter locally against a skill directory or GitHub repo:
@@ -81,8 +81,8 @@ For integration tests, add skill directories to `tests/fixtures/`.
 
 ## PR checklist
 
-- [ ] `npx tsc --noEmit` passes
-- [ ] `npm test` passes
+- [ ] `pnpm tsc --noEmit` passes
+- [ ] `pnpm test` passes
 - [ ] New rule is registered in `src/rules/index.ts`
 - [ ] New rule is added to all three presets
 - [ ] Tests cover both positive (detects issue) and negative (passes clean input) cases

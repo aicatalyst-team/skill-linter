@@ -1,0 +1,5 @@
+confirmModulesPurge: false
+allowBuilds:
+  esbuild: true
+overrides:
+  skill-linter: 'link:'
