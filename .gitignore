@@ -3,4 +3,5 @@ dist/
 *.tsbuildinfo
 .DS_Store
 coverage/
+package-lock.json
 *.log

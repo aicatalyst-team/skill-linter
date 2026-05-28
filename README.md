@@ -18,12 +18,14 @@ npm install -g skill-linter
 
 ## Run from Source
 
+Requires [pnpm](https://pnpm.io) >= 11 (or enable [Corepack](https://nodejs.org/api/corepack.html): `corepack enable`).
+
 ```bash
 git clone https://github.com/aicatalyst-team/skill-linter.git
 cd skill-linter
-npm install
-npm run build
-npm link
+pnpm install
+pnpm run build
+pnpm link --global
 ```
 
 This makes the `skill-linter` command available globally, so you can use it like the published package:
@@ -37,19 +39,19 @@ skill-linter rules
 To rebuild after making changes:
 
 ```bash
-npm run build
+pnpm run build
 ```
 
 Or use watch mode for continuous rebuilds during development:
 
 ```bash
-npm run dev
+pnpm run dev
 ```
 
 To unlink when done:
 
 ```bash
-npm unlink -g skill-linter
+pnpm rm --global skill-linter
 ```
 
 Requires Node.js >= 22.

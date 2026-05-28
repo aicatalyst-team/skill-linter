@@ -5,16 +5,16 @@ See AGENTS.md for full project context, architecture, and how to add rules.
 ## Quick reference
 
 ```
-npm run build          # Compile
-npm test               # Run tests
-npx tsc --noEmit       # Type check
+pnpm run build         # Compile
+pnpm test              # Run tests
+pnpm tsc --noEmit      # Type check
 node bin/skill-linter.js check tests/fixtures/valid/full-skill   # Smoke test (local)
 node bin/skill-linter.js check https://github.com/org/repo       # Smoke test (remote)
 ```
 
 ## Guidelines
 
-- Run `npm test` and `npx tsc --noEmit` before reporting work as complete
+- Run `pnpm test` and `pnpm tsc --noEmit` before reporting work as complete
 - This project is itself a linter — don't add code-style enforcement beyond what the rules check
 - ESM with `.js` import extensions throughout
 - Prefer editing existing files over creating new ones
