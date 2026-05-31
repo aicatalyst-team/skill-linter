@@ -19,4 +19,5 @@ export const strict: Record<string, RuleSeverityConfig> = {
   "best-practices/no-time-sensitive-content": "warning",
   "best-practices/no-excessive-negation": "warning",
   "best-practices/non-descriptive-filenames": "warning",
+  "best-practices/has-evals": "warning",
 };

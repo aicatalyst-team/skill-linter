@@ -14,6 +14,8 @@ import { nonDescriptiveFilenames } from "../../../src/rules/best-practices/non-d
 import { progressiveDisclosure } from "../../../src/rules/best-practices/progressive-disclosure.js";
 import { scriptsAreReferenced } from "../../../src/rules/best-practices/scripts-are-referenced.js";
 import { scriptsHaveHelp } from "../../../src/rules/best-practices/scripts-have-help.js";
+import { noInteractiveScripts } from "../../../src/rules/best-practices/no-interactive-scripts.js";
+import { hasEvals } from "../../../src/rules/best-practices/has-evals.js";
 
 describe("best-practices/description-has-trigger-words", () => {
   it("passes with trigger phrasing", async () => {
@@ -104,6 +106,73 @@ describe("best-practices/pinned-versions", () => {
     });
     expect(d.length).toBeGreaterThan(0);
     expect(d[0].message).toContain("npx");
+  });
+
+  it("passes for pinned npx", async () => {
+    const d = await runRule(pinnedVersions, {
+      rawContent: "---\nname: test\n---\nnpx eslint@9.0.0 .",
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("detects unpinned pipx run", async () => {
+    const d = await runRule(pinnedVersions, {
+      rawContent: "---\nname: test\n---\npipx run black .",
+    });
+    expect(d.length).toBeGreaterThan(0);
+    expect(d[0].message).toContain("pipx");
+  });
+
+  it("passes for pinned pipx run", async () => {
+    const d = await runRule(pinnedVersions, {
+      rawContent: "---\nname: test\n---\npipx run 'black==24.10.0' .",
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("detects unpinned bunx", async () => {
+    const d = await runRule(pinnedVersions, {
+      rawContent: "---\nname: test\n---\nbunx eslint .",
+    });
+    expect(d.length).toBeGreaterThan(0);
+    expect(d[0].message).toContain("bunx");
+  });
+
+  it("passes for pinned bunx", async () => {
+    const d = await runRule(pinnedVersions, {
+      rawContent: "---\nname: test\n---\nbunx eslint@9 .",
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("detects unpinned deno run npm:", async () => {
+    const d = await runRule(pinnedVersions, {
+      rawContent: "---\nname: test\n---\ndeno run npm:eslint .",
+    });
+    expect(d.length).toBeGreaterThan(0);
+    expect(d[0].message).toContain("deno");
+  });
+
+  it("passes for pinned deno run npm:", async () => {
+    const d = await runRule(pinnedVersions, {
+      rawContent: "---\nname: test\n---\ndeno run npm:eslint@9 .",
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("detects unpinned go run", async () => {
+    const d = await runRule(pinnedVersions, {
+      rawContent: "---\nname: test\n---\ngo run golang.org/x/tools/cmd/goimports .",
+    });
+    expect(d.length).toBeGreaterThan(0);
+    expect(d[0].message).toContain("go run");
+  });
+
+  it("passes for pinned go run", async () => {
+    const d = await runRule(pinnedVersions, {
+      rawContent: "---\nname: test\n---\ngo run golang.org/x/tools/cmd/goimports@v0.28.0 .",
+    });
+    expect(d).toHaveLength(0);
   });
 });
 
@@ -501,6 +570,49 @@ describe("best-practices/scripts-have-help", () => {
     const d = await runRule(scriptsHaveHelp, {
       files: [
         { path: "/test/my-skill/scripts/requirements.txt", relativePath: "scripts/requirements.txt" },
+      ],
+    });
+    expect(d).toHaveLength(0);
+  });
+});
+
+describe("best-practices/no-interactive-scripts", () => {
+  it("passes when no scripts directory exists", async () => {
+    const d = await runRule(noInteractiveScripts, {
+      files: [],
+    });
+    expect(d).toHaveLength(0);
+  });
+
+  it("skips data files", async () => {
+    const d = await runRule(noInteractiveScripts, {
+      files: [
+        { path: "/test/my-skill/scripts/requirements.txt", relativePath: "scripts/requirements.txt" },
+      ],
+    });
+    expect(d).toHaveLength(0);
+  });
+});
+
+describe("best-practices/has-evals", () => {
+  it("skips short skills", async () => {
+    const d = await runRule(hasEvals, { body: "Short content." });
+    expect(d).toHaveLength(0);
+  });
+
+  it("reports missing evals in large skill", async () => {
+    const longBody = "word ".repeat(1200);
+    const d = await runRule(hasEvals, { body: longBody, files: [] });
+    expect(d).toHaveLength(1);
+    expect(d[0].message).toContain("evals/");
+  });
+
+  it("passes when evals directory exists", async () => {
+    const longBody = "word ".repeat(1200);
+    const d = await runRule(hasEvals, {
+      body: longBody,
+      files: [
+        { path: "/test/my-skill/evals/evals.json", relativePath: "evals/evals.json" },
       ],
     });
     expect(d).toHaveLength(0);

@@ -54,4 +54,6 @@ export const recommended: Record<string, RuleSeverityConfig> = {
   "best-practices/no-time-sensitive-content": "info",
   "best-practices/no-excessive-negation": "info",
   "best-practices/non-descriptive-filenames": "info",
+  "best-practices/no-interactive-scripts": "warning",
+  "best-practices/has-evals": "info",
 };

@@ -4,6 +4,10 @@ const UNPINNED_PATTERNS: Array<{ pattern: RegExp; label: string }> = [
   { pattern: /npx\s+(?!.*@[\d])[a-z][\w-]+(?!\s*@)/i, label: "npx without version pin" },
   { pattern: /uvx\s+(?!.*@[\d])[a-z][\w-]+(?!\s*@)/i, label: "uvx without version pin" },
   { pattern: /pip\s+install\s+(?!.*[>=<~!])[a-z][\w-]+\s*$/im, label: "pip install without version pin" },
+  { pattern: /pipx\s+run\s+(?!.*[>=<~!@\d])[a-z][\w-]+/i, label: "pipx run without version pin" },
+  { pattern: /bunx\s+(?!.*@[\d])[a-z][\w-]+(?!\s*@)/i, label: "bunx without version pin" },
+  { pattern: /deno\s+run\s+npm:(?!.*@[\d])[a-z][\w-]+/i, label: "deno run npm: without version pin" },
+  { pattern: /go\s+run\s+(?!.*@)[a-z][\w./-]+/i, label: "go run without version pin" },
 ];
 
 export const pinnedVersions: Rule = {
