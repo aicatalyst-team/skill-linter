@@ -115,13 +115,38 @@ describe("frontmatter/no-extra-fields", () => {
         "argument-hint": "[file]",
         model: "claude-sonnet-4-5",
         effort: "medium",
+        context: "fork",
+        agent: "Explore",
+        when_to_use: "When reviewing PRs",
+        arguments: "file branch",
+        "disable-model-invocation": true,
+        "disallowed-tools": "Write",
+        hooks: {},
+        paths: "src/**",
+        shell: "bash",
       } as any,
       rawFrontmatter:
-        "name: test\ndescription: d\nuser-invocable: true\nargument-hint: '[file]'\nmodel: claude-sonnet-4-5\neffort: medium",
+        "name: test\ndescription: d\nuser-invocable: true\nargument-hint: '[file]'\nmodel: claude-sonnet-4-5\neffort: medium\ncontext: fork\nagent: Explore\nwhen_to_use: When reviewing PRs\narguments: file branch\ndisable-model-invocation: true\ndisallowed-tools: Write\nhooks: {}\npaths: 'src/**'\nshell: bash",
     });
-    expect(diagnostics).toHaveLength(4);
+    expect(diagnostics).toHaveLength(13);
     expect(diagnostics.every((d) => d.severity === "info")).toBe(true);
     expect(diagnostics.every((d) => d.message.includes("client extension"))).toBe(true);
+  });
+
+  it("downgrades context and agent fields to info", async () => {
+    const diagnostics = await runRule(noExtraFields, {
+      frontmatter: {
+        name: "test",
+        description: "d",
+        context: "fork",
+        agent: "Explore",
+      } as any,
+      rawFrontmatter: "name: test\ndescription: d\ncontext: fork\nagent: Explore",
+    });
+    expect(diagnostics).toHaveLength(2);
+    expect(diagnostics.every((d) => d.severity === "info")).toBe(true);
+    expect(diagnostics[0].message).toContain("context");
+    expect(diagnostics[1].message).toContain("agent");
   });
 
   it("still errors on truly unknown fields alongside extensions", async () => {

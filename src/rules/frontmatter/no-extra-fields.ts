@@ -15,6 +15,15 @@ const EXTENSION_FIELDS = new Set([
   "argument-hint",
   "model",
   "effort",
+  "context",
+  "agent",
+  "when_to_use",
+  "arguments",
+  "disable-model-invocation",
+  "disallowed-tools",
+  "hooks",
+  "paths",
+  "shell",
 ]);
 
 export const noExtraFields: Rule = {
