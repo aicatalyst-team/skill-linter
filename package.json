@@ -54,7 +54,7 @@
   "packageManager": "pnpm@11.1.2",
   "dependencies": {
     "@anthropic-ai/vertex-sdk": "^0.16.0",
-    "commander": "^14.0.0",
+    "commander": "^15.0.0",
     "gray-matter": "^4.0.3",
     "lilconfig": "^3.1.0",
     "node-sarif-builder": "^3.1.0",
